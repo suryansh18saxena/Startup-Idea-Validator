@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Idea | Startup Validator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-light-blue: #E3F2FD;
+            --bg-secondary: #FFFFFF;
+            --border-light: #E5E7EB;
+            --text-primary: #1F2937;
+            --primary: #4F46E5;
+            --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light-blue);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--gradient-primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .dashboard-container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 200;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 2.5rem;
+        }
+
+        .sidebar-logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--gradient-soft);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            color: var(--primary);
+            background: var(--gradient-soft);
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 2rem 3rem;
+            transition: margin-left 0.4s ease-in-out;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem;
+            }
+
+            body.sidebar-visible .sidebar {
+                transform: translateX(0);
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <aside class="sidebar">
+            <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>Validator</span></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="{% url 'home' %}" class="active"><i class="ph-fill ph-squares-four"></i> Home</a></li>
+                    <li><a href="{% url 'userdashboard' %}"><i class="ph-fill ph-lightbulb"></i> Submit New Idea</a>
+                    </li>
+                    <li><a href="{% url 'manage_ideas' %}"><i class="ph-fill ph-clock-counter-clockwise"></i>
+                            History</a></li>
+                    <li><a href="#"><i class="ph-fill ph-user"></i> Profile</a></li>
+                    <li><a href="#"><i class="ph-fill ph-gear"></i> Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 class="form-title">Edit Your Idea</h1>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="problem_statement" class="form-label">Problem Statement</label>
+                    <textarea id="problem_statement" name="porblem" class="form-textarea"
+                        required>{{ ideas.problem_statement }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="solution" class="form-label">Your Solution</label>
+                    <textarea id="solution" name="solution" class="form-textarea"
+                        required>{{ ideas.solution }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="market" class="form-label">Target Market</label>
+                    <textarea id="market" name="market" class="form-textarea" required>{{ ideas.market }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="usp" class="form-label">Unique Value Proposition</label>
+                    <textarea id="usp" name="usp" class="form-textarea" required>{{ ideas.unique_value }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="revenue" class="form-label">Revenue Model</label>
+                    <textarea id="revenue" name="revenue" class="form-textarea"
+                        required>{{ ideas.revenue_model }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="competitors" class="form-label">Known Competitors</label>
+                    <textarea id="competitors" name="competitors" class="form-textarea"
+                        required>{{ ideas.known_competitors }}</textarea>
+                </div>
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </form>
+            <a href="{% url 'manage_ideas' %}" class="back-link">Cancel and Go Back</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

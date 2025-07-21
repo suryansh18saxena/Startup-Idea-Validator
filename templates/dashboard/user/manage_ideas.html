@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Your Ideas | Startup Validator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-light-blue: #E3F2FD;
+            --bg-secondary: #FFFFFF;
+            --border-light: #E5E7EB;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --primary: #4F46E5;
+            --success: #10B981;
+            --danger: #EF4444;
+            --danger-light: #FEF2F2;
+            --danger-dark: #DC2626;
+            --primary-light: #F0F5FF;
+            --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light-blue);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .idea-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            transition: box-shadow 0.3s;
+        }
+
+        .idea-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .idea-card-header {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .idea-summary h3 {
+            margin: 0 0 4px 0;
+            color: var(--text-primary);
+        }
+
+        .idea-summary p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .idea-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .idea-score {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .idea-score span {
+            font-size: 0.8rem;
+            display: block;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .idea-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-edit:hover {
+            background-color: #e0eaff;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .btn-delete:hover {
+            background-color: #FEE2E2;
+            color: var(--danger-dark);
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .idea-card-header.active .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .idea-card-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+            padding: 0 24px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .idea-card-content.show {
+            opacity: 1;
+            padding: 24px;
+        }
+
+        .detail-item {
+            margin-bottom: 16px;
+        }
+
+        .detail-item h4 {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .detail-item p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            /* Preserves line breaks */
+        }
+
+        .dashboard-container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 200;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 2.5rem;
+        }
+
+        .sidebar-logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--gradient-soft);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            color: var(--primary);
+            background: var(--gradient-soft);
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 2rem 3rem;
+            transition: margin-left 0.4s ease-in-out;
+        }
+
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem;
+            }
+
+            body.sidebar-visible .sidebar {
+                transform: translateX(0);
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>
+        <aside class="sidebar">
+            <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>Validator</span></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="{% url 'home' %}" class="active"><i class="ph-fill ph-squares-four"></i> Home</a></li>
+                    <li><a href="{% url 'userdashboard' %}"><i class="ph-fill ph-lightbulb"></i> Submit New Idea</a>
+                    </li>
+                    <li><a href="{% url 'manage_ideas' %}"><i class="ph-fill ph-clock-counter-clockwise"></i>
+                            History</a></li>
+                    <li><a href="#"><i class="ph-fill ph-user"></i> Profile</a></li>
+                    <li><a href="#"><i class="ph-fill ph-gear"></i> Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Manage Your Ideas</h1>
+        </div>
+
+        {% if ideas %}
+        {% for idea in ideas %}
+        <div class="idea-card">
+            <div class="idea-card-header">
+                <div class="idea-summary">
+                    <h3>{{ idea.problem_statement|default:"Not provided." }}</h3>
+                    <p>Last updated: {{ idea.updated_at|date:"F j, Y" }}</p>
+                </div>
+                <div class="idea-meta">
+                    <div class="idea-score">
+                        78 <span>Score</span>
+                    </div>
+                    <div class="idea-actions">
+                        <a href="{% url 'edit_ideas' idea.id %}" class="btn btn-edit">Edit</a>
+                        <form action="{% url 'delete_ideas' idea.id %}" method="post"
+                            onsubmit="return confirm('Are you sure you want to delete this idea?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-delete">Delete</button>
+                        </form>
+                    </div>
+                    <i class="expand-icon ph ph-caret-down"></i>
+                </div>
+            </div>
+            <div class="idea-card-content">
+                <div class="detail-item">
+                    <h4>Problem Statement</h4>
+                    <p>{{ idea.problem_statement" }}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Your Solution</h4>
+                    <p>{{ idea.solution" }}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Target Market</h4>
+                    <p>{{ idea.market" }}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Unique Value Proposition</h4>
+                    <p>{{ idea.unique_value }}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Revenue Model</h4>
+                    <p>{{ idea.revenue_model }}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Known Competitors</h4>
+                    <p>{{ idea.known_competitors }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="idea-card" style="text-align: center; padding: 40px;">
+            <p>You haven't uploaded any ideas yet. Go to your dashboard to get started!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const headers = document.querySelectorAll('.idea-card-header');
+
+            headers.forEach(header => {
+                header.addEventListener('click', event => {
+                    // Prevent toggling when clicking on a button or link inside the header
+                    if (event.target.closest('a, button')) {
+                        return;
+                    }
+
+                    const content = header.nextElementSibling;
+                    const isActive = header.classList.contains('active');
+
+                    // Optional: Close all other accordions
+                    // headers.forEach(h => {
+                    //     h.classList.remove('active');
+                    //     h.nextElementSibling.classList.remove('show');
+                    //     h.nextElementSibling.style.maxHeight = null;
+                    // });
+
+                    if (!isActive) {
+                        header.classList.add('active');
+                        content.classList.add('show');
+                        // Set max-height to the scroll height for smooth transition
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    } else {
+                        header.classList.remove('active');
+                        content.classList.remove('show');
+                        content.style.maxHeight = null;
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

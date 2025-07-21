@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Startup Validator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-light-blue: #E3F2FD;
+            --bg-primary: #FAFBFC;
+            --bg-secondary: #FFFFFF;
+            --border-light: #E5E7EB;
+            --border-medium: #D1D5DB;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --primary: #4F46E5;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        /* Animated bubbles background */
+        .bubble-background {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; overflow: hidden; pointer-events: none;
+        }
+        .bubble {
+            position: absolute; bottom: -100px;
+            background-color: rgba(80, 166, 209, 0.4);
+            border-radius: 50%;
+            animation: rise linear infinite;
+        }
+        @keyframes rise {
+            from { transform: translateY(0); }
+            to { transform: translateY(-120vh); }
+        }
+
+        /* Signup container */
+        .signup-container {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.8s ease-out;
+            margin: 20px;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .signup-header { text-align: center; margin-bottom: 32px; }
+        .signup-title {
+            font-size: 32px; font-weight: 700; margin-bottom: 8px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .signup-subtitle { color: var(--text-secondary); font-size: 16px; }
+
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-row { display: flex; gap: 16px; }
+        .form-row .form-group { flex: 1; }
+        .form-label {
+            display: block; color: var(--text-primary);
+            font-size: 14px; font-weight: 500; margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%; padding: 14px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .form-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+        .form-input:focus {
+            outline: none; border-color: var(--primary);
+            background: var(--bg-secondary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .password-container { position: relative; }
+        .toggle-password {
+            position: absolute; right: 16px; top: 50%;
+            transform: translateY(-50%); background: none; border: none;
+            color: var(--text-secondary); cursor: pointer; font-size: 1.25rem;
+            transition: color 0.3s ease;
+        }
+        .toggle-password:hover { color: var(--primary); }
+
+        /* Password Strength Meter */
+        .password-strength { margin-top: 8px; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .password-strength-bar { height: 100%; width: 0%; border-radius: 3px; transition: all 0.3s ease; }
+        .strength-weak { background: var(--danger); width: 25%; }
+        .strength-fair { background: var(--warning); width: 50%; }
+        .strength-good { background: #86efac; width: 75%; }
+        .strength-strong { background: var(--success); width: 100%; }
+
+        /* Password Requirements */
+        .password-requirements { margin-top: 8px; font-size: 12px; color: var(--text-secondary); }
+        .requirement { display: flex; align-items: center; margin-bottom: 4px; transition: color 0.3s ease; }
+        .requirement.met { color: var(--success); }
+        .requirement-icon { margin-right: 6px; font-size: 10px; }
+
+        /* Custom Checkbox */
+        .checkbox-group { display: flex; align-items: flex-start; margin-bottom: 24px; gap: 12px; }
+        .custom-checkbox { position: relative; width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; }
+        .custom-checkbox input { opacity: 0; position: absolute; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+        .checkbox-design {
+            width: 100%; height: 100%; background: var(--bg-primary);
+            border: 2px solid var(--border-light); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+        }
+        .custom-checkbox input:checked + .checkbox-design { background: var(--gradient-primary); border-color: var(--primary); }
+        .checkmark { color: white; font-size: 1.25rem; opacity: 0; transition: opacity 0.3s ease; transform: scale(0.8); }
+        .custom-checkbox input:checked + .checkbox-design .checkmark { opacity: 1; }
+        .checkbox-label { color: var(--text-secondary); font-size: 14px; line-height: 1.4; }
+        .checkbox-label a { color: var(--primary); text-decoration: none; font-weight: 500; }
+        .checkbox-label a:hover { text-decoration: underline; }
+
+        /* Buttons & Dividers */
+        .signup-button {
+            width: 100%; padding: 16px; background: var(--gradient-primary);
+            border: none; border-radius: 12px; color: white;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); margin-bottom: 24px;
+        }
+        .signup-button:hover { transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+        .signup-button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .divider { margin: 24px 0; display: flex; align-items: center; text-align: center; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-light); }
+        .divider-text { color: var(--text-secondary); padding: 0 16px; font-size: 14px; }
+
+        .social-signup { display: flex; gap: 16px; margin-bottom: 32px; }
+        .social-button {
+            flex: 1; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border-light);
+            border-radius: 12px; color: var(--text-primary); text-decoration: none; font-size: 14px;
+            font-weight: 500; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .social-button:hover { background-color: var(--bg-primary); border-color: var(--border-medium); }
+        .social-button i { font-size: 1.25rem; }
+
+        .login-link { text-align: center; color: var(--text-secondary); font-size: 14px; }
+        .login-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+        /* Error States */
+        .error-message { color: var(--danger); font-size: 12px; margin-top: 4px; opacity: 0; transition: opacity 0.3s ease; height: 1em; }
+        .error-message.show { opacity: 1; }
+        .form-group.error .form-input { border-color: var(--danger); }
+        .form-group.error .form-input:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
+
+        /* Responsive */
+        @media (max-width: 580px) {
+            .signup-container { margin: 16px; padding: 32px 24px; }
+            .signup-title { font-size: 28px; }
+            .form-row { flex-direction: column; gap: 0; }
+            .social-signup { flex-direction: column; }
+        }
+
+                .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #f44336; /* Red */
+            color: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bubble-background"></div>
+
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1 class="signup-title">Create Your User Account</h1>
+            <p class="signup-subtitle">Join us today to validate your vision</p>
+        </div>
+
+        {% if messages %}
+    {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+
+        <form id="signupForm" method="POST" novalidate>
+            
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" id="firstName" class="form-input" name="first_name" placeholder="first name " required>
+                    <div class="error-message" id="firstNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" id="lastName" class="form-input" name="last_name" placeholder="last name" required>
+                    <div class="error-message" id="lastNameError"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="userName" class="form-label">User Name</label>
+                <input type="text" id="userName" class="form-input" name="username" placeholder="username" required>
+                <div class="error-message" id="userNameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" class="form-input" name="email" placeholder="xyz@example.com" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" class="form-input" name="password" placeholder="Create a strong password" required>
+                    <button type="button" class="toggle-password" id="password-toggle">
+                        <i class="ph ph-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="signup-button" id="signupBtn">Create Account</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="{% url 'login' %}">Log In</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Bubble creation script ---
+            const bubbleContainer = document.querySelector('.bubble-background');
+            if (bubbleContainer) {
+                const numberOfBubbles = 30;
+                for (let i = 0; i < numberOfBubbles; i++) {
+                    const bubble = document.createElement('div');
+                    bubble.classList.add('bubble');
+                    const size = Math.random() * 80 + 20;
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+                    bubble.style.left = `${Math.random() * 100}%`;
+                    const duration = Math.random() * 15 + 10;
+                    bubble.style.animationDuration = `${duration}s`;
+                    const delay = Math.random() * 10;
+                    bubble.style.animationDelay = `${delay}s`;
+                    bubbleContainer.appendChild(bubble);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

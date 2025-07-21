@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Startup Validator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            /* ADJUSTED: Added light blue background color */
+            --bg-light-blue: #E3F2FD;
+            --bg-primary: #FAFBFC; /* Kept for input field backgrounds */
+            --bg-secondary: #FFFFFF;
+            --border-light: #E5E7EB;
+            --border-medium: #D1D5DB;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --primary: #4F46E5;
+            --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* ADJUSTED: Set new background color */
+            background-color: var(--bg-light-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            padding: 2rem;
+        }
+
+        /* NEW: Cute moving bubbles background */
+        .bubble-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px; /* Start below the viewport */
+            background-color: rgba(80, 166, 209, 0.4);
+            border-radius: 50%;
+            animation: rise linear infinite;
+        }
+        
+        @keyframes rise {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-120vh); /* Move far above the viewport */
+            }
+        }
+
+        /* Login container styled with Validator theme */
+        .login-container {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Modern floating-label form inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .input-group .icon {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%); color: var(--text-secondary);
+            transition: color 0.3s;
+            pointer-events: none;
+        }
+        .input-group .form-input {
+            width: 100%; padding: 18px 16px 6px 50px;
+            border: 1px solid var(--border-light); border-radius: 12px; font-size: 1rem;
+            font-family: 'Poppins', sans-serif; transition: border-color 0.3s; background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .form-label {
+            position: absolute; top: 13px; left: 50px;
+            color: var(--text-secondary); pointer-events: none;
+            transition: all 0.2s ease;
+            /* ADJUSTED: Label background matches input background */
+            background-color: var(--bg-primary);
+            padding: 0 4px;
+        }
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            transform: translateY(-13px) scale(0.85);
+            color: var(--primary);
+        }
+        .form-input:focus { outline: none; border-color: var(--primary); }
+        .form-input:focus ~ .icon { color: var(--primary); }
+        .form-input::placeholder { color: transparent; }
+
+        .password-container { position: relative; }
+
+        .toggle-password {
+            position: absolute; right: 16px; top: 50%;
+            transform: translateY(-50%); background: none; border: none;
+            color: var(--text-secondary); cursor: pointer; font-size: 1.25rem;
+            transition: color 0.3s ease;
+        }
+        .toggle-password:hover { color: var(--primary); }
+
+        .forgot-password { text-align: right; margin-top: -16px; margin-bottom: 24px; }
+        .forgot-password a {
+            color: var(--primary); text-decoration: none;
+            font-size: 14px; font-weight: 500;
+        }
+        .forgot-password a:hover { text-decoration: underline; }
+
+        .login-button {
+            width: 100%; padding: 16px; background: var(--gradient-primary);
+            border: none; border-radius: 12px; color: white;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-button:hover { transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+        
+        .divider {
+            margin: 32px 0; display: flex; align-items: center; text-align: center;
+        }
+        .divider::before, .divider::after {
+            content: ''; flex: 1; border-bottom: 1px solid var(--border-light);
+        }
+        .divider-text { color: var(--text-secondary); padding: 0 16px; font-size: 14px; }
+
+        .social-login { display: flex; gap: 16px; margin-bottom: 32px; }
+        .social-button {
+            flex: 1; padding: 12px; background: var(--bg-secondary);
+            border: 1px solid var(--border-light); border-radius: 12px;
+            color: var(--text-primary); text-decoration: none;
+            font-size: 14px; font-weight: 500; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .social-button:hover { background-color: var(--bg-primary); border-color: var(--border-medium); }
+        .social-button i { font-size: 1.25rem; }
+
+        .signup-link { text-align: center; color: var(--text-secondary); font-size: 14px; }
+        .signup-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .signup-link a:hover { text-decoration: underline; }
+
+        .spinner {
+            display: none; width: 20px; height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%;
+            border-top-color: white; animation: spin 1s ease-in-out infinite;
+            margin-right: 12px;
+        }
+        .loading .spinner { display: inline-block; }
+        .loading { cursor: not-allowed; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+                .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #f44336; /* Red */
+            color: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bubble-background"></div>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="login-title">Welcome Back</h1>
+            <p class="login-subtitle">Login to your user account</p>
+        </div>
+        {% if messages %}
+    {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+        <form id="loginForm" method="POST">
+                    {% csrf_token %}
+
+
+            <div class="input-group">
+                
+                <input type="user name" id="user naem" name="username" class="form-input" placeholder="Enter the user name  " required>
+                <label for="User name" class="form-label">User Name</label>
+            </div>
+
+            <div class="input-group">
+                <i class="icon ph ph-lock"></i>
+                <div class="password-container">
+                    <input type="password"  name="password" id="password" class="form-input" placeholder=" " required>
+                    <label for="password" class="form-label">Password</label>
+
+                </div>
+            </div>
+
+
+            <button type="submit" class="login-button" id="loginBtn">
+                <!-- <span class="spinner"></span> -->
+                <span>log In</span>
+            </button>
+        </form>
+
+        <div class="signup-link">
+            <br>
+            <br>
+            Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- NEW: Bubble creation script ---
+            const bubbleContainer = document.querySelector('.bubble-background');
+            if (bubbleContainer) {
+                const numberOfBubbles = 30;
+                for (let i = 0; i < numberOfBubbles; i++) {
+                    const bubble = document.createElement('div');
+                    bubble.classList.add('bubble');
+                    
+                    const size = Math.random() * 80 + 20; // Size between 20px and 100px
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+                    
+                    bubble.style.left = `${Math.random() * 100}%`;
+                    
+                    const duration = Math.random() * 15 + 10; // Duration between 10s and 25s
+                    bubble.style.animationDuration = `${duration}s`;
+                    
+                    const delay = Math.random() * 10;
+                    bubble.style.animationDelay = `${delay}s`;
+
+                    bubbleContainer.appendChild(bubble);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
