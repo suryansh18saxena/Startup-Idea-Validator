@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Validator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* --- PROFESSIONAL COLOR THEME --- */
+        :root {
+            --bg-primary: #FAFBFC;          /* Soft white background */
+            --bg-secondary: #FFFFFF;        /* Pure white cards */
+            --bg-accent: #F8F9FB;           /* Light gray accent */
+            --border-light: #E5E7EB;        /* Light border */
+            --border-medium: #D1D5DB;       /* Medium border */
+            --text-primary: #1F2937;        /* Dark gray text */
+            --text-secondary: #6B7280;      /* Medium gray text */
+            --text-muted: #9CA3AF;          /* Light gray text */
+            --primary: #4F46E5;             /* Modern indigo */
+            --primary-dark: #3730A3;        /* Darker indigo */
+            --secondary: #06B6D4;           /* Cyan accent */
+            --success: #10B981;             /* Green */
+            --warning: #F59E0B;             /* Orange */
+            --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+            --gradient-soft: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        /* --- PARALLAX CONTAINERS --- */
+/* Replace it with this */
+.parallax-container {
+    position: relative;
+}
+
+        .parallax-element {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            background: var(--secondary);
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            background: var(--warning);
+            top: 30%;
+            right: 30%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-30px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(30px) rotate(240deg);
+            }
+            100% {
+                transform: translateY(0px) rotate(360deg);
+            }
+        }
+
+        .container {
+            display: flex;
+            position: relative;
+        }
+
+        /* --- Preloader Animation --- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-primary);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-dots {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .loader-dots div {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: pulse 1.4s infinite ease-in-out;
+        }
+
+        .loader-dots div:nth-child(1) {
+            background-color: var(--primary);
+            animation-delay: -0.32s;
+        }
+        .loader-dots div:nth-child(2) {
+            background-color: var(--secondary);
+            animation-delay: -0.16s;
+        }
+        .loader-dots div:nth-child(3) {
+            background-color: var(--primary);
+        }
+
+        @keyframes pulse {
+            0%, 80%, 100% {
+                transform: scale(0.6);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+
+
+        /* --- Main Content Area --- */
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 0 4rem;
+            transition: margin-left 0.4s ease-in-out;
+            position: relative;
+            z-index: 1;
+        }
+        
+        body.sidebar-visible .main-content {
+            margin-left: 280px;
+        }
+        
+        /* Main Header - UPDATED FOR DISTINCT LOOK */
+/* --- Main Header - UPDATED FOR SCROLL EFFECT --- */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    margin-bottom: 2rem;
+    position: sticky;
+    top: 10px;
+    background-color: rgba(93, 141, 193, 0.366);
+    z-index: 100;
+    border-radius: 0; /* Default state: Straight corners */
+    box-shadow: none; /* Default state: No shadow */
+    border-bottom: 1px solid var(--border-light);
+    /* Add a smooth transition for the changes */
+    transition: border-radius 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+/* This new class will be added via JavaScript on scroll */
+.main-header.header-scrolled {
+    border-radius: 30px; /* Scrolled state: Rounded corners */
+    box-shadow: var(--shadow-sm); /* Scrolled state: Add shadow for depth */
+}
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-logo {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-logo i {
+            color: var(--primary);
+            font-size: 1.75rem;
+        }
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    /* --- ADD THIS LINE FOR RIGHT MARGIN --- */
+    margin-right: 1.5rem; 
+}
+        
+
+        .main-header .nav-links {
+            display: flex;
+            gap: 2rem; 
+        }
+
+        .main-header .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .main-header .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transform: translateX(-50%);
+            transition: width 0.3s ease-out;
+        }
+
+        .main-header .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .main-header .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .main-header .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid var(--border-medium);
+            background-color: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .main-header .btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .main-header .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: #FFFFFF;
+        }
+        
+        .main-header .btn-primary:hover {
+            box-shadow: var(--shadow-lg);
+            color: #FFFFFF;
+        }
+
+        #hero {
+            padding-top: 2rem;
+            position: relative;
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        h1[data-type-effect], h2[data-type-effect] {
+             min-height: 1.2em;
+        }
+        h1[data-type-effect] {
+             min-height: 3.6em; /* Adjust to fit multiple lines */
+        }
+
+        #hero {
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+        }
+        
+        .hero-text .platform-tag {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: var(--gradient-soft);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+
+        .hero-text p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+        
+        .hero-checklist {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+        }
+        
+        .hero-checklist div {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero-checklist i {
+            color: var(--success);
+            font-size: 1.25rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .hero-actions .btn-start {
+            padding: 1rem 2rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .hero-actions .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .hero-actions .watch-demo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .hero-actions .watch-demo:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        .validation-dashboard {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .validation-dashboard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .validation-dashboard h3 {
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .stat-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-item .label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .stat-item .value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            width: 100%;
+            background-color: var(--bg-accent);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+            width: 0; /* Initial width */
+        }
+
+        .progress.blue { background: var(--gradient-primary); }
+        .progress.yellow { background-color: var(--warning); }
+        .progress.purple { background-color: var(--primary); }
+        
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .hero-stats-item h4 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .hero-stats-item p {
+            color: var(--text-secondary);
+        }
+
+        #features {
+            text-align: center;
+            margin-bottom: 6rem;
+            position: relative;
+        }
+
+        #features > p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.6;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: left;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-card .icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-soft);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+        
+        .feature-card .icon i {
+            font-size: 1.75rem;
+            color: var(--primary);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            min-height: 60px;
+            line-height: 1.6;
+        }
+        
+        .feature-card ul {
+            list-style-type: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.25rem;
+        }
+
+        .feature-card ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .feature-card a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card a:hover {
+            transform: translateX(5px);
+        }
+        
+        .features-explore {
+            margin-top: 3rem;
+        }
+        
+        .features-explore .btn {
+            padding: 1rem 2rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .features-explore .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        #process {
+            text-align: center;
+            margin-bottom: 6rem;
+            position: relative;
+        }
+        
+        #process > p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 4rem auto;
+            line-height: 1.6;
+        }
+        
+        .process-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+            text-align: left;
+            margin-bottom: 3rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .process-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 35px; /* Aligns with the center of the step-number */
+            top: 80px;
+            width: 2px;
+            height: calc(100% - 40px);
+            background: linear-gradient(to bottom, var(--primary), transparent);
+        }
+        
+        .step-content {
+            flex-basis: 50%;
+        }
+
+        .step-number {
+            width: 70px;
+            height: 70px;
+            border: 2px solid var(--border-medium);
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .step-content.active .step-number {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--gradient-soft);
+        }
+        
+        .step-content h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            margin-left: 50px;
+            color: var(--text-primary);
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            margin-left: 50px;
+            line-height: 1.6;
+        }
+
+        .step-content ul {
+            list-style: none;
+            color: var(--text-secondary);
+        }
+
+        .step-content ul li {
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .step-content ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .step-visual {
+            flex-basis: 40%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            padding: 2.5rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .step-visual:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .step-visual i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .step-visual p {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .step-progress {
+            width: 100%;
+            height: 6px;
+            background-color: var(--bg-accent);
+            border-radius: 3px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        
+        .step-progress .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            width: 0; /* Initial Width */
+            transition: width 1s ease-out;
+        }
+
+        /* --- Scroll Animations --- */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-animation {
+            transition-delay: calc(var(--delay) * 0.1s);
+        }
+        
+        /* --- Footer --- */
+        .footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+            padding: 4rem 4rem 2rem;
+            text-align: center;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-align: left;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .footer-about, .footer-links {
+            flex: 1;
+            min-width: 200px;
+        }
+        .footer-about h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .footer-about i {
+            color: var(--primary);
+        }
+        .footer-about p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .footer-links h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .footer-links ul {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        .footer-bottom {
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        .social-links a {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            margin-left: 1rem;
+            transition: color 0.3s ease;
+        }
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+             .main-header .nav-links {
+                display: none; /* Hide nav links on tablets, rely on sidebar */
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            #hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-text, .validation-dashboard {
+                max-width: 600px;
+            }
+            .hero-actions, .hero-checklist {
+                justify-content: center;
+            }
+            .process-step {
+                 flex-direction: column;
+                 gap: 2rem;
+            }
+            .step-content, .step-visual {
+                flex-basis: 100%;
+                width: 100%;
+            }
+             .process-step:not(:last-child)::after {
+                 display: none;
+             }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0 2rem;
+            }
+            .header-logo {
+                display: none; /* Hide header logo on small screens to save space */
+            }
+            .main-header {
+                justify-content: space-between;
+            }
+            .header-left {
+                flex-grow: 1;
+            }
+            #hero {
+                gap: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+             .footer-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="loader-dots">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <div class="floating-shapes">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+    </div>
+
+    <div class="container parallax-container">
+
+        <main class="main-content">
+            <header class="main-header parallax-element">
+                <div class="header-left">
+                     <div class="header-logo">
+                        <i class="ph-fill ph-rocket-launch"></i>
+                        <span>Validator</span>
+                    </div>
+                </div>
+                
+                <nav class="nav-links">
+                    <a href="#features">Community</a>
+                    <a href="#process">Market Analysis</a>
+                    <a href="#">Dashboard</a>
+
+                </nav>
+
+                <div class="header-right">
+                    <a href="#" class="btn">Log In</a>
+                    <a href="#" class="btn btn-primary">Sign Up</a>
+                </div>
+            </header>
+
+           <section id="hero" class="parallax-container">
+    <div class="hero-text animate-on-scroll">
+        <span class="platform-tag">#1 Validation Platform</span>
+        <h1 data-type-effect="Validate Your Startup Idea with" class='gradient-text'>AI-Powered Insights</h1>
+        <p>Stop guessing. Start building with confidence. Our AI analyzes your idea, market, and competition to give you actionable feedback in minutes.</p>
+        
+        <div class="hero-checklist">
+            <div><i class="ph-fill ph-check-circle"></i> Instant Feedback</div>
+            <div><i class="ph-fill ph-check-circle"></i> No Credit Card</div>
+            <div><i class="ph-fill ph-check-circle"></i> Competitor Analysis</div>
+            <div><i class="ph-fill ph-check-circle"></i> Data-Driven</div>
+        </div>
+
+        <div class="hero-actions">
+            <button class="btn-start">
+                Get Started Free
+                <i class="ph ph-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="validation-dashboard parallax-element animate-on-scroll">
+        <h3>Real-time Validation Score</h3>
+        <div class="stat-item">
+            <div class="label">
+                <span>Market Fit</span>
+                <span class="value">85%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress blue" data-width="85%"></div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="label">
+                <span>Profitability</span>
+                <span class="value">72%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress yellow" data-width="72%"></div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="label">
+                <span>Scalability</span>
+                <span class="value">91%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress purple" data-width="91%"></div>
+            </div>
+        </div>
+    </div>
+</section>
+            <section id="features">
+                 <h2 class="animate-on-scroll">Transform Your <span class="gradient-text">Idea</span> into a <span class="gradient-text">Success</span></h2>
+                 <p class="animate-on-scroll">We provide a comprehensive suite of tools to help you at every stage of the validation process, from initial concept to market launch.</p>
+                 <div class="features-grid">
+                     <div class="feature-card animate-on-scroll stagger-animation" style="--delay: 1;">
+                         <div class="icon"><i class="ph ph-lightbulb-filament"></i></div>
+                         <h3>AI Idea Score</h3>
+                         <p>Get an objective score for your startup idea based on dozens of data points and predictive models.</p>
+                         <a href="#">Learn More <i class="ph ph-caret-right"></i></a>
+                     </div>
+                     <div class="feature-card animate-on-scroll stagger-animation" style="--delay: 2;">
+                         <div class="icon"><i class="ph ph-users-three"></i></div>
+                         <h3>Market Analysis</h3>
+                         <p>Understand your target audience, market size, and key trends with our automated research tools.</p>
+                         <a href="#">Learn More <i class="ph ph-caret-right"></i></a>
+                     </div>
+                     <div class="feature-card animate-on-scroll stagger-animation" style="--delay: 3;">
+                         <div class="icon"><i class="ph ph-binoculars"></i></div>
+                         <h3>Competitor Deep-Dive</h3>
+                         <p>Identify your main competitors and analyze their strengths, weaknesses, and online presence.</p>
+                         <a href="#">Learn More <i class="ph ph-caret-right"></i></a>
+                     </div>
+                 </div>
+                 <div class="features-explore animate-on-scroll">
+                     <a href="#" class="btn">Explore All Features <i class="ph ph-arrow-right"></i></a>
+                 </div>
+            </section>
+
+             <section id="process">
+                <h2 class="animate-on-scroll">A Simple, Four-Step Process</h2>
+                <p class="animate-on-scroll">Go from a raw idea to a validated concept, ready for development. Our streamlined process makes it easy and intuitive.</p>
+                <div class="process-step animate-on-scroll">
+                    <div class="step-content">
+                        <div class="step-number">01</div>
+                        <h3>Submit Your Idea</h3>
+                        <p>Provide a detailed description of your startup idea. The more details you give our AI, the more accurate your analysis will be.</p>
+                    </div>
+                    <div class="step-visual">
+                        <i class="ph ph-pencil-line"></i>
+                        <p>Describe Your Vision</p>
+                        <div class="step-progress">
+                            <div class="progress-fill" data-width="25%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="process-step animate-on-scroll">
+                    <div class="step-content">
+                        <div class="step-number">02</div>
+                        <h3>AI Analysis Engine</h3>
+                        <p>Our system crunches data on market trends, existing solutions, and potential customer pain points to build a complete profile.</p>
+                    </div>
+                    <div class="step-visual">
+                        <i class="ph ph-robot"></i>
+                        <p>Processing Data</p>
+                         <div class="step-progress">
+                            <div class="progress-fill" data-width="50%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="process-step animate-on-scroll">
+                    <div class="step-content">
+                        <div class="step-number">03</div>
+                        <h3>Receive Your Report</h3>
+                        <p>Get a comprehensive, easy-to-understand report with scores, charts, and actionable recommendations in under 5 minutes.</p>
+                    </div>
+                    <div class="step-visual">
+                        <i class="ph ph-file-text"></i>
+                        <p>Actionable Insights</p>
+                         <div class="step-progress">
+                            <div class="progress-fill" data-width="75%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="process-step animate-on-scroll">
+                    <div class="step-content">
+                        <div class="step-number">04</div>
+                        <h3>Refine and Iterate</h3>
+                        <p>Use the feedback to refine your idea. Re-submit as many times as you need to improve your score and build a solid foundation.</p>
+                    </div>
+                    <div class="step-visual">
+                        <i class="ph ph-arrows-clockwise"></i>
+                        <p>Improve & Succeed</p>
+                         <div class="step-progress">
+                            <div class="progress-fill" data-width="100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-about">
+                        <h3><i class="ph-fill ph-rocket-launch"></i> Startup Validator</h3>
+                        <p>Giving founders the data-driven confidence to build the next big thing. Stop guessing, start validating.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Product</h4>
+                        <ul>
+                            <li><a href="#">Features</a></li>
+                            <li><a href="#">Pricing</a></li>
+                            <li><a href="#">Integrations</a></li>
+                            <li><a href="#">API Docs</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                     <div class="footer-links">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Support</a></li>
+                            <li><a href="#">Case Studies</a></li>
+                            <li><a href="#">Community</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <span>© 2025 Startup Validator. All rights reserved.</span>
+                    <div class="social-links">
+                        <a href="#"><i class="ph-fill ph-twitter-logo"></i></a>
+                        <a href="#"><i class="ph-fill ph-linkedin-logo"></i></a>
+                        <a href="#"><i class="ph-fill ph-github-logo"></i></a>
+                    </div>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Preloader
+            const preloader = document.getElementById('preloader');
+            window.addEventListener('load', () => {
+                preloader.classList.add('hidden');
+            });
+
+
+            // Parallax Effect
+            const parallaxContainer = document.querySelector('.parallax-container');
+            if (parallaxContainer) {
+                parallaxContainer.addEventListener('mousemove', (e) => {
+                    const elements = parallaxContainer.querySelectorAll('.parallax-element');
+                    const x = (e.clientX - window.innerWidth / 2) / 50;
+                    const y = (e.clientY - window.innerHeight / 2) / 50;
+
+                    elements.forEach(el => {
+                        el.style.transform = `translateX(${x}px) translateY(${y}px)`;
+                    });
+                });
+            }
+
+            // Typing Effect
+            const typeEffectElements = document.querySelectorAll('[data-type-effect]');
+            typeEffectElements.forEach(el => {
+                const text = el.getAttribute('data-type-effect');
+                let i = 0;
+                el.innerHTML = ''; // Clear original content
+                function type() {
+                    if (i < text.length) {
+                         // Check for tags to add them instantly
+                        if (text.substring(i, i + 4) === '<br>') {
+                            el.innerHTML += '<br>';
+                            i += 4;
+                        } else if (text.substring(i, i + 26) === "<span class='gradient-text'>") {
+                             el.innerHTML += "<span class='gradient-text'>";
+                             i += 26;
+                        } else if (text.substring(i, i + 7) === '</span>') {
+                             el.innerHTML += '</span>';
+                             i += 7;
+                        }
+                        else {
+                            el.innerHTML += text.charAt(i);
+                            i++;
+                        }
+                        setTimeout(type, 50);
+                    }
+                }
+                type();
+            });
+
+            // Animate on Scroll
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+
+                        // Animate progress bars when they become visible
+                        const progressBars = entry.target.querySelectorAll('.progress, .progress-fill');
+                        progressBars.forEach(bar => {
+                            const width = bar.getAttribute('data-width');
+                            if (width) {
+                                bar.style.width = width;
+                            }
+                        });
+                        
+                        // Activate step content when visible
+                        if(entry.target.classList.contains('process-step')) {
+                           const content = entry.target.querySelector('.step-content');
+                           if(content) content.classList.add('active');
+                        }
+
+                        scrollObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                scrollObserver.observe(el);
+            });
+        });
+
+    // --- SCROLL TO CHANGE HEADER STYLE ---
+const header = document.querySelector('.main-header');
+
+// Check if the header element exists to prevent errors
+if (header) { 
+    window.addEventListener('scroll', () => {
+        // If user scrolls down more than 50 pixels, add the "header-scrolled" class
+        if (window.scrollY > 50) {
+            header.classList.add('header-scrolled');
+        } 
+        // Otherwise, if they are at the top, remove it
+        else {
+            header.classList.remove('header-scrolled');
+        }
+    });
+}
+    </script>
+
+</body>
+</html>
