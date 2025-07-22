@@ -1030,6 +1030,69 @@
         gap: 1rem;
       }
     }
+    /* --- Dropdown Menu Styles --- */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Space between buttons */
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    right: 0;
+    top: 110%; /* Position it just below the button */
+    background-color: var(--bg-secondary);
+    min-width: 200px;
+    box-shadow: var(--shadow-lg);
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    z-index: 100;
+    overflow: hidden; /* Ensures border-radius is respected by children */
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Show the dropdown on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: var(--text-primary);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--bg-primary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
   </style>
 </head>
 
@@ -1063,14 +1126,27 @@
           <a href="#process">Market Analysis</a>
           <a href="{% url 'dashboard' %}">Go to Dashboard</a>
         </nav>
-        <div class="header-right">
-          {% if request.user.is_authenticated %}
-          <a href="{% url 'logout' %}" class="btn">Log out</a>
-          {% else %}
-          <a href="{% url 'login' %}" class="btn">Log in</a>
-          <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
-          {% endif %}
+<div class="header-right">
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="btn">Log Out</a>
+    {% else %}
+        <div class="dropdown">
+            <a href="#" class="btn">Log In <i class="ph ph-caret-down"></i></a>
+            <div class="dropdown-content">
+                <a href="{% url 'login' %}">Log In as Founder</a>
+                <a href="{% url 'investor_login' %}">Log In as Investor</a>
+            </div>
         </div>
+
+        <div class="dropdown">
+            <a href="#" class="btn btn-primary">Sign Up <i class="ph ph-caret-down"></i></a>
+            <div class="dropdown-content">
+                <a href="{% url 'signup' %}">Sign Up as Founder</a>
+                <a href="{% url 'investor_signup' %}">Sign Up as Investor</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
       </header>
 
       <section id="hero" class="parallax-container">

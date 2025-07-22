@@ -84,3 +84,9 @@ def delete_ideas(request, idea_id):
         "ideas": idea
     }
     return render(request, "dashboard/user/manage_ideas.html", parameters)
+
+# ====================================Investor Dashboard====================================
+
+@login_required
+def investor_dashboard(request):
+    return render(request,"dashboard/investor/investor_dashboard.html")

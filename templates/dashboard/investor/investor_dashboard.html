@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Dashboard | Startup Validator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-primary: #F8F9FA;
+            --bg-secondary: #FFFFFF;
+            --border-light: #DEE2E6;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --primary: #4F46E5;
+            --accent-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --gradient-soft: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+            --shadow-md: 0 4px D10px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.07);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        body.sidebar-visible {
+            overflow: hidden;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px; height: 100vh; background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-light); padding: 2rem;
+            display: flex; flex-direction: column; position: fixed;
+            left: 0; top: 0; z-index: 200; transition: transform 0.4s ease-in-out;
+        }
+        .sidebar-logo {
+            display: flex; align-items: center; gap: 0.75rem;
+            font-size: 1.25rem; font-weight: 600; margin-bottom: 2.5rem;
+        }
+        .sidebar-logo i { font-size: 2rem; color: var(--primary); }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav a {
+            display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1rem;
+            border-radius: 12px; text-decoration: none; color: var(--text-secondary);
+            font-weight: 500; transition: all 0.3s ease; margin-bottom: 0.5rem;
+        }
+        .sidebar-nav a:hover { background: var(--gradient-soft); color: var(--text-primary); }
+        .sidebar-nav a.active { color: var(--primary); background: var(--gradient-soft); font-weight: 600; }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: margin-left 0.4s ease-in-out, width 0.4s ease-in-out;
+            padding: 2rem 3rem;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .header-title h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+        .header-title p { color: var(--text-secondary); }
+        .search-bar { position: relative; width: 300px; }
+        .search-bar input {
+            width: 100%; padding: 12px 16px 12px 40px; border-radius: 10px;
+            border: 1px solid var(--border-light); font-size: 1rem;
+        }
+        .search-bar i {
+            position: absolute; left: 12px; top: 50%;
+            transform: translateY(-50%); color: var(--text-secondary);
+        }
+
+        /* Filters */
+        .filter-bar {
+            display: flex; gap: 0.5rem; margin-bottom: 2rem;
+        }
+        .filter-btn {
+            padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-light);
+            background: var(--bg-secondary); color: var(--text-secondary);
+            font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+        }
+        .filter-btn:hover { background-color: #f1f1f1; border-color: var(--border-medium); }
+        .filter-btn.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+        }
+
+        /* Idea Grid */
+        .idea-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        .idea-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        .idea-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .card-header h3 { font-size: 1.25rem; margin-right: 1rem; }
+        .market-tag {
+            background: var(--gradient-soft); color: var(--primary); padding: 4px 10px;
+            border-radius: 20px; font-size: 0.75rem; font-weight: 600; flex-shrink: 0;
+        }
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex-grow: 1; /* Pushes footer down */
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-light);
+            padding-top: 1rem;
+        }
+
+        /* Animated Progress Circle */
+        .score-circle { position: relative; width: 60px; height: 60px; }
+        .score-circle svg { transform: rotate(-90deg); }
+        .score-circle circle { fill: none; stroke-width: 6; }
+        .circle-bg { stroke: var(--border-light); }
+        .circle-progress {
+            stroke: var(--primary);
+            stroke-linecap: round;
+            animation: progress-animation 2s ease-out forwards;
+        }
+        @keyframes progress-animation { from { stroke-dashoffset: 157; } } /* 2*PI*R */
+        .score-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 700; color: var(--primary);
+        }
+        
+        .btn-view {
+            padding: 8px 16px; border: none; border-radius: 8px;
+            background: var(--accent-gradient); color: white;
+            text-decoration: none; font-weight: 600;
+        }
+        
+        /* Mobile Menu */
+        .menu-toggle { display: none; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; width: 100%; }
+            .menu-toggle {
+                display: flex; position: fixed; top: 20px; left: 20px; z-index: 300;
+                background: var(--bg-secondary); border: 1px solid var(--border-light);
+                border-radius: 50%; width: 50px; height: 50px;
+                justify-content: center; align-items: center; box-shadow: var(--shadow-lg);
+                cursor: pointer;
+            }
+            .menu-toggle i { font-size: 1.5rem; }
+            body.sidebar-visible .sidebar { transform: translateX(0); }
+        }
+        @media (max-width: 768px) {
+            .main-content { padding: 1.5rem; padding-top: 80px; }
+            .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .search-bar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>Validator</span></div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#" class="active"><i class="ph-fill ph-squares-four"></i> Deal Flow</a></li>
+                <li><a href="#"><i class="ph-fill ph-handshake"></i> My Connections</a></li>
+                <li><a href="#"><i class="ph-fill ph-magnifying-glass"></i> Search</a></li>
+                <li><a href="#"><i class="ph-fill ph-user"></i> Profile</a></li>
+                <li><a href="#"><i class="ph-fill ph-gear"></i> Settings</a></li>
+                <li><a href="{% url 'logout' %}"><i class="ph-fill ph-sign-out"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <button class="menu-toggle" id="menu-toggle">
+        <i class="ph ph-list"></i>
+    </button>
+
+    <main class="main-content">
+        <div class="dashboard-header">
+            <div class="header-title">
+                <h1>Investor Deal Flow</h1>
+                {% if user.is_authenticated %}
+                <p>Welcome back, {{ user.first_name }}! Here are the latest opportunities.</p>
+                {% endif %}
+            </div>
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Search by keyword or market...">
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active">Newest</button>
+            <button class="filter-btn">Top Score</button>
+            <button class="filter-btn">FinTech</button>
+            <button class="filter-btn">SaaS</button>
+            <button class="filter-btn">HealthTech</button>
+        </div>
+
+        <div class="idea-grid">
+            <div class="idea-card">
+                <div class="card-header">
+                    <h3>AI-Powered Personal Finance Coach</h3>
+                    <span class="market-tag">FinTech</span>
+                </div>
+                <p class="card-description">A mobile app that uses generative AI to provide hyper-personalized financial advice, budgeting, and investment strategies for millennials.</p>
+                <div class="card-footer">
+                    <div class="score-circle">
+                        <span class="score-text">85</span>
+                        <svg width="60" height="60">
+                            <circle class="circle-bg" cx="30" cy="30" r="25"></circle>
+                            <circle class="circle-progress" cx="30" cy="30" r="25" style="stroke-dasharray: 157; stroke-dashoffset: calc(157 - (157 * 85) / 100);"></circle>
+                        </svg>
+                    </div>
+                    <a href="#" class="btn-view">View Details & SWOT</a>
+                </div>
+            </div>
+            <div class="idea-card">
+                <div class="card-header">
+                    <h3>Decentralized Clinical Trial Platform</h3>
+                    <span class="market-tag">HealthTech</span>
+                </div>
+                <p class="card-description">A blockchain-based platform that streamlines patient recruitment and data management for clinical trials, ensuring data integrity and transparency.</p>
+                <div class="card-footer">
+                    <div class="score-circle">
+                        <span class="score-text">78</span>
+                        <svg width="60" height="60">
+                            <circle class="circle-bg" cx="30" cy="30" r="25"></circle>
+                            <circle class="circle-progress" cx="30" cy="30" r="25" style="stroke-dasharray: 157; stroke-dashoffset: calc(157 - (157 * 78) / 100);"></circle>
+                        </svg>
+                    </div>
+                    <a href="#" class="btn-view">View Details & SWOT</a>
+                </div>
+            </div>
+            <div class="idea-card">
+                <div class="card-header">
+                    <h3>Sustainable Supply Chain Logistics</h3>
+                    <span class="market-tag">SaaS</span>
+                </div>
+                <p class="card-description">A B2B SaaS platform that uses machine learning to optimize supply chains for sustainability, reducing carbon footprint and improving ESG scores.</p>
+                <div class="card-footer">
+                    <div class="score-circle">
+                        <span class="score-text">91</span>
+                        <svg width="60" height="60">
+                            <circle class="circle-bg" cx="30" cy="30" r="25"></circle>
+                            <circle class="circle-progress" cx="30" cy="30" r="25" style="stroke-dasharray: 157; stroke-dashoffset: calc(157 - (157 * 91) / 100);"></circle>
+                        </svg>
+                    </div>
+                    <a href="#" class="btn-view">View Details & SWOT</a>
+                </div>
+            </div>
+            </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menu-toggle');
+            const body = document.body;
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    body.classList.toggle('sidebar-visible');
+                    const icon = this.querySelector('i');
+                    icon.classList.toggle('ph-list');
+                    icon.classList.toggle('ph-x');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
