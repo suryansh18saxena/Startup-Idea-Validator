@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Startup Validator</title>
+    <title>Dashboard | IdeaSaarthi </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@
 <body>
     <div class="dashboard-container">
         <aside class="sidebar">
-            <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>Validator</span></div>
+            <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>IdeaSaarthi</span></div>
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="{% url 'home' %}" class="active"><i class="ph-fill ph-squares-four"></i> Home</a></li>
@@ -155,8 +155,9 @@
         <main class="main-content">
             <header class="dashboard-header">
                 <div class="greeting">
-                    <h1>Welcome Back, Alex!</h1>
-                    <p>Here's the graphical analysis of your latest startup idea.</p>
+                {% if user.is_authenticated %}
+                <p>Welcome, {{ user.first_name }}</p>
+                {% endif %}
                 </div>
                 <div class="header-actions">
                     <a href="{% url 'userdashboard' %}" class="btn"><i class="ph-fill ph-plus-circle"></i> Submit New Idea</a>
@@ -228,7 +229,7 @@
         </main>
     </div>
 
-    <!-- <script> 
+ <script> 
         document.addEventListener('DOMContentLoaded', () => {
             const FONT_COLOR = '#6B7280';
             const BORDER_COLOR = 'rgba(0, 0, 0, 0.05)';
@@ -281,6 +282,6 @@
             createBarChart('opportunitiesChart', ['Influencer Partnerships', 'Corporate Wellness', 'Subscription Box'], [80, 75, 70], '#06B6D4');
             createBarChart('threatsChart', ['High Competition', 'Changing Trends', 'Data Privacy'], [65, 55, 40], '#EF4444');
         });
-</script> -->
+</script> 
 </body>
 </html>

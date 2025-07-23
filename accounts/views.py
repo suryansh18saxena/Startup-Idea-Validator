@@ -21,9 +21,7 @@ def signup(request):
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered. Try logging in.")
             return redirect("signup")
-        if User.objects.filter(password = password).exists():
-            messages.error(request, "Password already in use. Try another.")
-            return redirect("signup")
+        
 
         new_user = User.objects.create_user(
             username = username,
@@ -54,10 +52,11 @@ def login(request):
         if user is not None:
             auth.login(request, user) #this is the function for the login
 
-            return redirect("home")
+            return redirect("dashboard")
         else:
             messages.error(request,"Invalid username or password.")
-            
+            return redirect("login")
+
     return render(request,"accounts/user/login.html")
 
 

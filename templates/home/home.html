@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Startup Validator</title>
+  <title> IdeaSaarthi </title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -233,7 +233,7 @@
       top: 10px;
       background-color: rgba(93, 141, 193, 0.366);
       z-index: 100;
-      border-radius: 0;
+      border-radius: 30px;
       /* Default state: Straight corners */
       box-shadow: none;
       /* Default state: No shadow */
@@ -244,7 +244,7 @@
 
     /* This new class will be added via JavaScript on scroll */
     .main-header.header-scrolled {
-      border-radius: 30px;
+      border-radius: ;
       /* Scrolled state: Rounded corners */
       box-shadow: var(--shadow-sm);
       /* Scrolled state: Add shadow for depth */
@@ -263,6 +263,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      margin-left: 1.5rem;
     }
 
     .header-logo i {
@@ -1117,14 +1118,16 @@
         <div class="header-left">
           <div class="header-logo">
             <i class="ph-fill ph-rocket-launch"></i>
-            <span>Validator</span>
+            <span>IdeaSaarthi</span>
           </div>
         </div>
 
         <nav class="nav-links">
+          {% if request.user.is_authenticated %}
           <a href="#features">Community</a>
           <a href="#process">Market Analysis</a>
           <a href="{% url 'dashboard' %}">Go to Dashboard</a>
+          {% endif %}
         </nav>
 <div class="header-right">
     {% if request.user.is_authenticated %}
@@ -1133,7 +1136,7 @@
         <div class="dropdown">
             <a href="#" class="btn">Log In <i class="ph ph-caret-down"></i></a>
             <div class="dropdown-content">
-                <a href="{% url 'login' %}">Log In as Founder</a>
+                <a href="{% url 'login' %}">Log In as User</a>
                 <a href="{% url 'investor_login' %}">Log In as Investor</a>
             </div>
         </div>
@@ -1141,7 +1144,7 @@
         <div class="dropdown">
             <a href="#" class="btn btn-primary">Sign Up <i class="ph ph-caret-down"></i></a>
             <div class="dropdown-content">
-                <a href="{% url 'signup' %}">Sign Up as Founder</a>
+                <a href="{% url 'signup' %}">Sign Up as User</a>
                 <a href="{% url 'investor_signup' %}">Sign Up as Investor</a>
             </div>
         </div>
@@ -1335,14 +1338,14 @@
         <div class="footer-content">
           <div class="footer-about">
             <h3>
-              <i class="ph-fill ph-rocket-launch"></i> Startup Validator
+              <i class="ph-fill ph-rocket-launch"></i> IdeaSaarthi
             </h3>
             <p>
               Giving founders the data-driven confidence to build the next big
               thing. Stop guessing, start validating.
             </p>
           </div>
-          <div class="footer-links">
+          <!-- <div class="footer-links">
             <h4>Product</h4>
             <ul>
               <li><a href="#">Features</a></li>
@@ -1350,17 +1353,17 @@
               <li><a href="#">Integrations</a></li>
               <li><a href="#">API Docs</a></li>
             </ul>
-          </div>
+          </div> -->
           <div class="footer-links">
             <h4>Company</h4>
             <ul>
               <li><a href="#">About Us</a></li>
-              <li><a href="#">Careers</a></li>
+              <!-- <li><a href="#">Careers</a></li> -->
               <li><a href="#">Blog</a></li>
-              <li><a href="#">Contact</a></li>
+              <!-- <li><a href="#">Contact</a></li> -->
             </ul>
           </div>
-          <div class="footer-links">
+          <!-- <div class="footer-links">
             <h4>Resources</h4>
             <ul>
               <li><a href="#">Support</a></li>
@@ -1368,10 +1371,10 @@
               <li><a href="#">Community</a></li>
               <li><a href="#">Privacy Policy</a></li>
             </ul>
-          </div>
+          </div> -->
         </div>
         <div class="footer-bottom">
-          <span>© 2025 Startup Validator. All rights reserved.</span>
+          <span>© 2025 IdeaSaarthi. All rights reserved.</span>
           <div class="social-links">
             <a href="#"><i class="ph-fill ph-twitter-logo"></i></a>
             <a href="#"><i class="ph-fill ph-linkedin-logo"></i></a>

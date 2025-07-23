@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investor Dashboard | Startup Validator</title>
+    <title>Investor Dashboard | IdeaSaarthi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
             --primary: #4F46E5;
             --accent-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             --gradient-soft: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
-            --shadow-md: 0 4px D10px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.05);
             --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.07);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -84,14 +84,14 @@
 
         /* Filters */
         .filter-bar {
-            display: flex; gap: 0.5rem; margin-bottom: 2rem;
+            display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap;
         }
         .filter-btn {
             padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-light);
             background: var(--bg-secondary); color: var(--text-secondary);
             font-weight: 500; cursor: pointer; transition: all 0.2s ease;
         }
-        .filter-btn:hover { background-color: #f1f1f1; border-color: var(--border-medium); }
+        .filter-btn:hover { background-color: #f1f1f1; }
         .filter-btn.active {
             background: var(--primary); color: white; border-color: var(--primary);
         }
@@ -118,7 +118,7 @@
             display: flex; justify-content: space-between; align-items: flex-start;
             margin-bottom: 1rem;
         }
-        .card-header h3 { font-size: 1.25rem; margin-right: 1rem; }
+        .card-header h3 { font-size: 1.25rem; margin-right: 1rem; color: var(--text-primary);}
         .market-tag {
             background: var(--gradient-soft); color: var(--primary); padding: 4px 10px;
             border-radius: 20px; font-size: 0.75rem; font-weight: 600; flex-shrink: 0;
@@ -146,9 +146,8 @@
         .circle-progress {
             stroke: var(--primary);
             stroke-linecap: round;
-            animation: progress-animation 2s ease-out forwards;
+            transition: stroke-dashoffset 1s ease-out; /* Use transition for dynamic values */
         }
-        @keyframes progress-animation { from { stroke-dashoffset: 157; } } /* 2*PI*R */
         .score-text {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
@@ -188,7 +187,7 @@
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>Validator</span></div>
+        <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>IdeaSaarthi</span></div>
         <nav class="sidebar-nav">
             <ul>
                 <li><a href="#" class="active"><i class="ph-fill ph-squares-four"></i> Deal Flow</a></li>
@@ -210,7 +209,7 @@
             <div class="header-title">
                 <h1>Investor Deal Flow</h1>
                 {% if user.is_authenticated %}
-                <p>Welcome back, {{ user.first_name }}! Here are the latest opportunities.</p>
+                <p>Welcome back, {{ user.first_name|default:user.username }}! Here are the latest opportunities.</p>
                 {% endif %}
             </div>
             <div class="search-bar">
@@ -226,59 +225,31 @@
             <button class="filter-btn">SaaS</button>
             <button class="filter-btn">HealthTech</button>
         </div>
-
+        
         <div class="idea-grid">
+            {% for idea in ideas %}
             <div class="idea-card">
                 <div class="card-header">
-                    <h3>AI-Powered Personal Finance Coach</h3>
-                    <span class="market-tag">FinTech</span>
+                    <h3>{{ idea.title }}</h3>
+                    <span class="market-tag">{{ idea.market }}</span>
                 </div>
-                <p class="card-description">A mobile app that uses generative AI to provide hyper-personalized financial advice, budgeting, and investment strategies for millennials.</p>
+                <p class="card-description">{{ idea.solution|truncatewords:25 }}</p>
                 <div class="card-footer">
                     <div class="score-circle">
-                        <span class="score-text">85</span>
+                        <span class="score-text">{{ idea.score|default:75 }}</span>
                         <svg width="60" height="60">
                             <circle class="circle-bg" cx="30" cy="30" r="25"></circle>
-                            <circle class="circle-progress" cx="30" cy="30" r="25" style="stroke-dasharray: 157; stroke-dashoffset: calc(157 - (157 * 85) / 100);"></circle>
+                            <circle class="circle-progress" cx="30" cy="30" r="25" style="stroke-dasharray: 157; stroke-dashoffset: calc(157 - (157 * {{ idea.score|default:75 }}) / 100);"></circle>
                         </svg>
                     </div>
                     <a href="#" class="btn-view">View Details & SWOT</a>
                 </div>
             </div>
-            <div class="idea-card">
-                <div class="card-header">
-                    <h3>Decentralized Clinical Trial Platform</h3>
-                    <span class="market-tag">HealthTech</span>
+            {% empty %}
+                <div class="idea-card" style="grid-column: 1 / -1; text-align: center;">
+                    <p>No ideas are available to display at the moment.</p>
                 </div>
-                <p class="card-description">A blockchain-based platform that streamlines patient recruitment and data management for clinical trials, ensuring data integrity and transparency.</p>
-                <div class="card-footer">
-                    <div class="score-circle">
-                        <span class="score-text">78</span>
-                        <svg width="60" height="60">
-                            <circle class="circle-bg" cx="30" cy="30" r="25"></circle>
-                            <circle class="circle-progress" cx="30" cy="30" r="25" style="stroke-dasharray: 157; stroke-dashoffset: calc(157 - (157 * 78) / 100);"></circle>
-                        </svg>
-                    </div>
-                    <a href="#" class="btn-view">View Details & SWOT</a>
-                </div>
-            </div>
-            <div class="idea-card">
-                <div class="card-header">
-                    <h3>Sustainable Supply Chain Logistics</h3>
-                    <span class="market-tag">SaaS</span>
-                </div>
-                <p class="card-description">A B2B SaaS platform that uses machine learning to optimize supply chains for sustainability, reducing carbon footprint and improving ESG scores.</p>
-                <div class="card-footer">
-                    <div class="score-circle">
-                        <span class="score-text">91</span>
-                        <svg width="60" height="60">
-                            <circle class="circle-bg" cx="30" cy="30" r="25"></circle>
-                            <circle class="circle-progress" cx="30" cy="30" r="25" style="stroke-dasharray: 157; stroke-dashoffset: calc(157 - (157 * 91) / 100);"></circle>
-                        </svg>
-                    </div>
-                    <a href="#" class="btn-view">View Details & SWOT</a>
-                </div>
-            </div>
+            {% endfor %}
             </div>
     </main>
 

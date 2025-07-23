@@ -89,4 +89,9 @@ def delete_ideas(request, idea_id):
 
 @login_required
 def investor_dashboard(request):
-    return render(request,"dashboard/investor/investor_dashboard.html")
+
+    parameters = {
+        "ideas": Ideas.objects.all()
+    }
+
+    return render(request,"dashboard/investor/investor_dashboard.html", parameters)

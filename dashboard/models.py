@@ -13,3 +13,5 @@ class Ideas(models.Model):
     known_competitors = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
