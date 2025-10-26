@@ -30,7 +30,7 @@ next i want to say is,
     Jab user apni startup idea deta hai, then int the response use simple words easy to understand and response should be JUST A LIST of python. for example, ["strength", "weakness", "opportunities", "threats","score_strength", "score_weakness", "score_opportunities", "score_threats","score"]. just response in this format, and remember that where i ask for the score only provide the score no text aur anything else, Answer directly, do not include any introductory or polite phrases, just give the final output only.Return the SWOT analysis and also calculate the the score of each SWOT and after the bases of all the score calculate the final the score out of 100, strictly in array format without any explanation or additional text but keep in mind that the SWOT details should be comprehensive and cover all aspects of the idea.
         {idea_details}
         """
-        api = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=AIzaSyAFjRKhjlGyjjTQ5C2A5p_QPEQp3q8JeN0"
+        api = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=YOUR_API_KEY"
         payload = {
         "contents": [{"parts": [{"text": prompt}]}]
         }
