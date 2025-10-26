@@ -1,0 +1,97 @@
+{% extends "home/base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block button %}{% endblock %}
+
+{% block printbutton %} {% endblock %}
+
+{% block body %}
+<style>
+    /* --- Page-Specific Styles for Profile --- */
+    .main-content {
+        margin-left: 220px;
+        padding: 2rem;
+    }
+    .panel {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 2rem;
+    }
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    .avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .form-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border-light);
+        font-size: 1rem;
+    }
+    .btn-primary {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        background: var(--gradient-primary);
+        cursor: pointer;
+    }
+    .form-actions { text-align: right; margin-top: 1.5rem; }
+</style>
+
+<div class="main-content">
+    <div class="panel profile-header">
+        <img src="{{ user.profile.avatar.url|default:'/static/default_avatar.png' }}" alt="User Avatar" class="avatar">
+        <div>
+            <h2>{{ user.first_name|default:user.username }}</h2>
+            <p>{{ user.email }}</p>
+        </div>
+    </div>
+
+    <div class="panel form-section">
+        <h2>Edit Profile Information</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-control" value="{{ user.username }}" readonly disabled>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" id="first_name" class="form-control" value="{{ user.first_name }}">
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="last_name" class="form-control" value="{{ user.last_name }}">
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

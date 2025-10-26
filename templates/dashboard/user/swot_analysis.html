@@ -1,0 +1,326 @@
+  {% extends "home/base.html" %}
+
+{% block title %}SWOT Analysis Report{% endblock %}
+
+
+{% block button %}{% endblock %}
+
+
+
+{% block body %}
+    <style>
+        :root {
+            --bg-primary: #F8F9FA;
+            --bg-secondary: #FFFFFF;
+            --border-light: #DEE2E6;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --accent-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --primary: #4F46E5;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #06B6D4;
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.07);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        /* --- BACKGROUND & LAYOUT --- */
+        .background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+            background-image:
+                linear-gradient(var(--border-light) 1px, transparent 1px),
+                linear-gradient(to right, var(--border-light) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+        }
+
+        
+        /* --- MAIN CONTENT WRAPPER --- */
+        .main-content {
+            margin-left: 260px; /* Same as sidebar width */
+            transition: margin-left 0.4s ease-in-out;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 1rem;
+        }
+        
+        /* --- HEADER --- */
+        .report-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-left: 15px;
+            margin-right: 15px; 
+            margin-top: 10px;
+        }
+        .report-header h1 { font-size: 1.5rem; font-weight: 600; }
+        .report-header p { font-size: 0.9rem; color: var(--text-secondary);  }
+        .btn-print {
+            padding: 0.75rem 1.25rem; border: none; border-radius: 10px;
+            background: var(--accent-gradient); color: white;
+            font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+            transition: transform 0.3s;
+        }
+        .btn-print:hover { transform: scale(1.05); }
+
+        /* --- PANELS & CARDS --- */
+        .panel {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 1rem;
+        }
+        
+        /* --- Overview Section --- */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .kpi-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            text-align: center;
+            border-top: 5px solid;
+        }
+        .kpi-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .kpi-value {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .kpi-card.strengths { border-color: var(--success); } .kpi-card.strengths .kpi-value { color: var(--success); }
+        .kpi-card.weaknesses { border-color: var(--warning); } .kpi-card.weaknesses .kpi-value { color: var(--warning); }
+        .kpi-card.opportunities { border-color: var(--info); } .kpi-card.opportunities .kpi-value { color: var(--info); }
+        .kpi-card.threats { border-color: var(--danger); } .kpi-card.threats .kpi-value { color: var(--danger); }
+
+        /* Chart & Text Report Grids */
+        .detailed-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+        .chart-container h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+        .chart-container.strengths h3 { color: var(--success); }
+        .chart-container.weaknesses h3 { color: var(--warning); }
+        .chart-container.opportunities h3 { color: var(--info); }
+        .chart-container.threats h3 { color: var(--danger); }
+
+        .text-report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .report-card { border-top: 4px solid; padding-top: 1.5rem; }
+        .report-card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+        .report-card ul { list-style: none; padding-left: 0; }
+        .report-card li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem; }
+        .report-card.strengths { border-color: var(--success); } .report-card.strengths h3 { color: var(--success); }
+        .report-card.weaknesses { border-color: var(--warning); } .report-card.weaknesses h3 { color: var(--warning); }
+        .report-card.opportunities { border-color: var(--info); } .report-card.opportunities h3 { color: var(--info); }
+        .report-card.threats { border-color: var(--danger); } .report-card.threats h3 { color: var(--danger); }
+        
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+            .overview-grid, .detailed-charts-grid, .text-report-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .report-header {
+                 position: static; /* Make header scroll with page on mobile */
+            }
+        }
+        @media (max-width: 768px) {
+            .overview-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 576px) {
+            .overview-grid { grid-template-columns: 1fr; }
+            .report-header { flex-direction: column; gap: 1rem; text-align: center;}
+        }
+
+    </style>
+</head>
+<body>
+    <div class="background-wrapper"></div>
+    
+
+    <main class="main-content">
+
+        <div >
+
+            <h1>SWOT Analysis Report</h1>
+            <p>For Idea: <strong>{{ idea.problem_statement }}</strong></p>
+            
+        </div>
+            
+        </header>
+        <div class="container">
+
+            <div class="panel">
+                <h2 class="section-title">Analysis Overview</h2>
+                <div class="overview-grid">
+                    <div class="kpi-card strengths"><h3><i class="ph-fill ph-trend-up"></i>Strengths</h3><div class="kpi-value">{{ idea.score_strengths|default:0 }}</div></div>
+                    <div class="kpi-card weaknesses"><h3><i class="ph-fill ph-trend-down"></i>Weaknesses</h3><div class="kpi-value">{{ idea.score_weaknesses|default:0 }}</div></div>
+                    <div class="kpi-card opportunities"><h3><i class="ph-fill ph-rocket-launch"></i>Opportunities</h3><div class="kpi-value">{{ idea.score_opportunities|default:0 }}</div></div>
+                    <div class="kpi-card threats"><h3><i class="ph-fill ph-shield-warning"></i>Threats</h3><div class="kpi-value">{{ idea.score_threats|default:0 }}</div></div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="section-title">Visual Analysis</h2>
+                <div class="detailed-charts-grid">
+                    <div class="chart-container strengths">
+                        <h3><i class="ph-bold ph-chart-bar-horizontal"></i> Strengths Details</h3>
+                        <canvas id="strengthsChart"></canvas>
+                    </div>
+                    <div class="chart-container weaknesses">
+                        <h3><i class="ph-bold ph-chart-bar-horizontal"></i> Weaknesses Details</h3>
+                        <canvas id="weaknessesChart"></canvas>
+                    </div>
+                    <div class="chart-container opportunities">
+                        <h3><i class="ph-bold ph-chart-bar-horizontal"></i> Opportunities Details</h3>
+                        <canvas id="opportunitiesChart"></canvas>
+                    </div>
+                    <div class="chart-container threats">
+                        <h3><i class="ph-bold ph-chart-bar-horizontal"></i> Threats Details</h3>
+                        <canvas id="threatsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="section-title">Detailed Text Report</h2>
+                <div class="text-report-grid">
+                    <div class="report-card strengths">
+                        <h3><i class="ph-bold ph-check-circle"></i> Strengths</h3>
+                        <ul>{{ idea.strengths|default:"<li>No strengths analysis available.</li>" }}</ul>
+                    </div>
+                    <div class="report-card weaknesses">
+                        <h3><i class="ph-bold ph-x-circle"></i> Weaknesses</h3>
+                        <ul>{{ idea.weaknesses|default:"<li>No weaknesses analysis available.</li>" }}</ul>
+                    </div>
+                    <div class="report-card opportunities">
+                        <h3><i class="ph-bold ph-rocket-launch"></i> Opportunities</h3>
+                        <ul>{{ idea.opportunities|default:"<li>No opportunities analysis available.</li>" }}</ul>
+                    </div>
+                    <div class="report-card threats">
+                        <h3><i class="ph-bold ph-warning"></i> Threats</h3>
+                        <ul>{{ idea.threats|default:"<li>No threats analysis available.</li>" }}</ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const createBarChart = (canvasId, indexAxis, labels, data, color) => {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{ 
+                            label: 'Score', data: data,
+                            backgroundColor: color,
+                            borderColor: color,
+                            borderWidth: 1, 
+                            borderRadius: 4,
+                            barThickness: 20
+                        }]
+                    },
+                    options: {
+                        indexAxis: indexAxis, 
+                        responsive: true,
+                        scales: {
+                            x: { 
+                                beginAtZero: true, 
+                                max: 100,
+                                grid: { drawOnChartArea: false }, 
+                                ticks: { color: '#6B7280', font: { family: 'Poppins' } }
+                            },
+                            y: { 
+                                grid: { display: false }, 
+                                ticks: { color: '#495057', font: { family: 'Poppins', weight: 500 } }
+                            }
+                        },
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: '#212529',
+                                titleFont: { family: 'Poppins', size: 14 },
+                                bodyFont: { family: 'Poppins' },
+                                padding: 10,
+                                cornerRadius: 6,
+                                displayColors: false
+                            }
+                        }
+                    }
+                });
+            };
+            
+            // --- DATA FROM IMAGE ---
+            const strengthsLabels = ["Personalization", "API Integration", "Market Growth"];
+            const strengthsData = [92, 82, 88];
+            const weaknessesLabels = ["User Onboarding", "API Reliance", "Content Need"];
+            const weaknessesData = [60, 70, 50];
+            const opportunitiesLabels = ["Influencer Partnerships", "Corporate Wellness", "Subscription Box"];
+            const opportunitiesData = [88, 80, 80];
+            const threatsLabels = ["High Competition", "Changing Trends", "Data Privacy"];
+            const threatsData = [75, 65, 50];
+            
+            // --- Get colors from CSS Variables ---
+            const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success');
+            const warningColor = getComputedStyle(document.documentElement).getPropertyValue('--warning');
+            const infoColor = getComputedStyle(document.documentElement).getPropertyValue('--info');
+            const dangerColor = getComputedStyle(document.documentElement).getPropertyValue('--danger');
+
+            // --- Create the charts ---
+            createBarChart('strengthsChart', 'y', strengthsLabels, strengthsData, successColor);
+            createBarChart('weaknessesChart', 'y', weaknessesLabels, weaknessesData, warningColor);
+            createBarChart('opportunitiesChart', 'y', opportunitiesLabels, opportunitiesData, infoColor);
+            createBarChart('threatsChart', 'y', threatsLabels, threatsData, dangerColor);
+        });
+    </script>
+{% endblock %}

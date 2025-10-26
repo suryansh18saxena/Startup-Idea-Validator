@@ -7,6 +7,7 @@
     <title>Edit Idea | IdeaSaarthi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
@@ -116,70 +117,19 @@
             display: flex;
         }
 
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border-light);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 200;
-            transition: transform 0.4s ease-in-out;
-        }
+         /* --- DASHBOARD LAYOUT & SIDEBAR --- */
+        .dashboard-container { display: flex; }
+        .sidebar { width: 260px; height: 100vh; background-color: var(--bg-secondary); border-right: 1px solid var(--border-light); padding: 2rem; display: flex; flex-direction: column; position: fixed; left: 0; top: 0; z-index: 200; transition: transform 0.4s ease-in-out; }
+        .sidebar-logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 600; margin-bottom: 2.5rem; }
+        .sidebar-logo i { font-size: 2rem; color: var(--primary); }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1rem; border-radius: 12px; text-decoration: none; color: var(--text-secondary); font-weight: 500; transition: all 0.3s ease; margin-bottom: 0.5rem; }
+        .sidebar-nav a:hover { background: var(--gradient-soft); color: var(--text-primary); }
+        .sidebar-nav a.active { color: var(--primary); background: var(--gradient-soft); font-weight: 600; }
+        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 2rem 3rem; transition: margin-left 0.4s ease-in-out; }
+        
 
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 2.5rem;
-        }
-
-        .sidebar-logo i {
-            font-size: 2rem;
-            color: var(--primary);
-        }
-
-        .sidebar-nav ul {
-            list-style: none;
-        }
-
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.9rem 1rem;
-            border-radius: 12px;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-nav a:hover {
-            background: var(--gradient-soft);
-            color: var(--text-primary);
-        }
-
-        .sidebar-nav a.active {
-            color: var(--primary);
-            background: var(--gradient-soft);
-            font-weight: 600;
-        }
-
-        .main-content {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            padding: 2rem 3rem;
-            transition: margin-left 0.4s ease-in-out;
-        }
-
+        
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -210,8 +160,8 @@
             <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>IdeaSaarthi</span></div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="{% url 'home' %}" class="active"><i class="ph-fill ph-squares-four"></i> Home</a></li>
-                    <li><a href="{% url 'userdashboard' %}"><i class="ph-fill ph-lightbulb"></i> Submit New Idea</a>
+                    <li><a href="{% url 'dashboard' %}" class="active"><i class="ph-fill ph-squares-four"></i> Home</a></li>
+                    <li><a href="{% url 'request' %}"><i class="ph-fill ph-lightbulb"></i>Request</a>
                     </li>
                     <li><a href="{% url 'manage_ideas' %}"><i class="ph-fill ph-clock-counter-clockwise"></i>
                             History</a></li>
@@ -230,7 +180,7 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="problem_statement" class="form-label">Problem Statement</label>
-                    <textarea id="problem_statement" name="porblem" class="form-textarea"
+                    <textarea id="problem_statement" name="problem" class="form-textarea"
                         required>{{ ideas.problem_statement }}</textarea>
                 </div>
                 <div class="form-group">

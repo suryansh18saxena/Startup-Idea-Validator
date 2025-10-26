@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #F8F9FA;
+            --bg-secondary: #FFFFFF;
+            --border-light: #E9ECEF;
+            --text-primary: #212529;
+            --text-secondary: #6C757D;
+            --primary: #4F46E5;
+            --primary-light: #eef2ff;
+            --green: #10B981;
+            --green-light: #f0fdf4;
+            --red: #EF4444;
+            --red-light: #fef2f2;
+            --grey: #6C757D;
+            --grey-light: #f8f9fa;
+            --accent-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        body.sidebar-visible {
+            overflow: hidden;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 200;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+        }
+
+        .sidebar-logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a i {
+            font-size: 1.2rem;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: margin-left 0.4s ease-in-out, width 0.4s ease-in-out;
+            padding: 2rem 3rem;
+        }
+
+        /* --- Connections Page Specific Styles --- */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+        }
+
+        .connections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            list-style: none; /* Yahaan se list-style hataya */
+        }
+
+        .connection-card {
+            background: var(--bg-secondary);
+            /* Border default (pending) ke liye set kiya */
+            border-left: 5px solid var(--grey); 
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .connection-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Status ke hisaab se border color badlega */
+        .connection-card.status-accepted {
+            border-left-color: var(--green);
+        }
+
+        .connection-card.status-rejected {
+            border-left-color: var(--red);
+        }
+
+        .idea-details {
+            flex-grow: 1; /* Taaki yeh poori jagah le */
+        }
+
+        .idea-details h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        /* Sabhi 'p' tags ke liye base style */
+        .idea-details p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* Accepted Email ke liye specific style */
+        .idea-details .contact-email {
+            font-weight: 500;
+            color: var(--primary);
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+        
+        /* Baaki status ke contact info ke liye style */
+         .idea-details .contact-info {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+
+        .status-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: white;
+            text-transform: capitalize;
+            flex-shrink: 0; /* Taaki yeh shrink na ho */
+            align-self: center; /* Center mein align karega */
+            margin-left: 1rem; /* Left side se thoda gap */
+        }
+
+        /* Status ke hisaab se badge ka background color */
+        .status-tag.status-pending { background-color: var(--grey); }
+        .status-tag.status-accepted { background-color: var(--green); }
+        .status-tag.status-rejected { background-color: var(--red); }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: var(--shadow-lg);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            body.sidebar-visible .sidebar {
+                transform: translateX(0);
+            }
+
+            body.sidebar-visible::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.4);
+                z-index: 199;
+            }
+
+             .menu-toggle {
+                 display: flex;
+                 position: fixed;
+                 top: 20px;
+                 left: 20px;
+                 z-index: 300;
+                 background: var(--bg-secondary);
+                 border: 1px solid var(--border-light);
+                 border-radius: 50%;
+                 width: 50px;
+                 height: 50px;
+                 justify-content: center;
+                 align-items: center;
+                 box-shadow: var(--shadow-lg);
+                 cursor: pointer;
+             }
+
+             .menu-toggle i {
+                 font-size: 1.5rem;
+             }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+                padding-top: 90px;
+            }
+
+            .connection-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.25rem;
+            }
+
+            .status-tag {
+                align-self: flex-start;
+                margin-left: 0;
+            }
+        }
+
+{% block extra_styles %}
+{% endblock %}
+
+
+    </style>
+
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>IdeaSaarthi</span></div>
+        <nav class="sidebar-nav">
+    <ul>
+        <li>
+            <a href="{% url 'investor_dashboard' %}" class="{% if request.path == '/dashboard/investor_dashboard/' %}active{% endif %}">
+                <i class="ph-fill ph-squares-four"></i> Deal Flow
+            </a>
+        </li>
+        
+        <li>
+            <a href="{% url 'my_connections' %}" class="{% if request.path == '/dashboard/my_connections/' %}active{% endif %}">
+                <i class="ph-fill ph-handshake"></i> My Connections
+            </a>
+        </li>
+
+        <li>
+            <a href="#"><i class="ph-fill ph-user"></i> Profile</a>
+        </li>
+        <li>
+            <a href="{% url 'logout' %}"><i class="ph-fill ph-sign-out"></i> Logout</a>
+        </li>
+    </ul>
+</nav>
+    </aside>
+
+  {% block body %}
+
+  {% endblock %}    
+</body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.getElementById('menu-toggle');
+            const body = document.body;
+            const sidebar = document.querySelector('.sidebar');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    body.classList.toggle('sidebar-visible');
+                    const icon = this.querySelector('i');
+                    icon.classList.toggle('ph-list');
+                    icon.classList.toggle('ph-x');
+                });
+            }
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (e) {
+                if (body.classList.contains('sidebar-visible') && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    body.classList.remove('sidebar-visible');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('ph-x');
+                    icon.classList.add('ph-list');
+                }
+            });
+        });
+    </script>
+
+</html>

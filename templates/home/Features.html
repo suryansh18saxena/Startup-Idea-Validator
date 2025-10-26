@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features | IdeaSaarthi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #3730A3;
+            --secondary: #06B6D4;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --bg-primary: #f8f9fc;
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --shadow-lg: 0 10px 30px rgba(79, 70, 229, 0.15);
+        }
+
+        /* --- Animated Background --- */
+        @keyframes move {
+            100% { transform: translate3d(0, 0, 1px) rotate(360deg); }
+        }
+
+        .background {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            background: var(--bg-primary);
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .background span {
+            width: 20vmin;
+            height: 20vmin;
+            border-radius: 20vmin;
+            backface-visibility: hidden;
+            position: absolute;
+            animation: move 45s linear infinite;
+        }
+        .background span:nth-child(0) { color: var(--secondary); top: 29%; left: 4%; animation-duration: 49s; }
+        .background span:nth-child(1) { color: #EF4444; top: 58%; left: 2%; animation-duration: 47s; }
+        .background span:nth-child(2) { color: #10B981; top: 51%; left: 98%; animation-duration: 43s; }
+        .background span:nth-child(3) { color: var(--primary); top: 44%; left: 51%; animation-duration: 45s; }
+        .background span:nth-child(4) { color: var(--secondary); top: 88%; left: 81%; animation-duration: 43s; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        
+        /* Glass Panel Base Style */
+        .panel {
+            background: rgba(255, 255, 255, 0.35);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            color: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            margin-top: 4rem;
+        }
+        
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            background: var(--gradient-primary);
+            color: #FFFFFF;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.25);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="background">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="container">
+        <header class="header panel">
+            <h1>Powerful Features for Your Success</h1>
+            <p>IdeaSaarthi provides you with a suite of advanced tools to analyze your startup ideas, connect with the right investors, and track your progress—all in one place.</p>
+        </header>
+
+        <main class="features-grid">
+            <div class="feature-card">
+                <i class="ph-bold ph-brain feature-icon"></i>
+                <h3>AI-Powered Analysis</h3>
+                <p>Get an instant, data-driven SWOT analysis of your startup idea. Our AI identifies strengths, weaknesses, opportunities, and threats to help you refine your strategy.</p>
+            </div>
+            <div class="feature-card">
+                <i class="ph-bold ph-handshake feature-icon"></i>
+                <h3>Investor Matching</h3>
+                <p>Our smart algorithm connects you with investors whose interests and portfolio align with your industry and vision, increasing your chances of securing funding.</p>
+            </div>
+            <div class="feature-card">
+                <i class="ph-bold ph-folder-simple feature-icon"></i>
+                <h3>Idea Dashboard</h3>
+                <p>Manage all your startup ideas from a single, intuitive dashboard. Track their scores, view analysis history, and manage connection requests with ease.</p>
+            </div>
+            <div class="feature-card">
+                <i class="ph-bold ph-lock-key feature-icon"></i>
+                <h3>Secure Communication</h3>
+                <p>Communicate with interested investors through a secure and private messaging system, ensuring your sensitive information remains confidential.</p>
+            </div>
+            <div class="feature-card">
+                <i class="ph-bold ph-chart-line-up feature-icon"></i>
+                <h3>Performance Analytics</h3>
+                <p>Visualize your idea's potential with detailed charts and metrics. Track your average scores and see how your ideas stack up against benchmarks.</p>
+            </div>
+            <div class="feature-card">
+                <i class="ph-bold ph-file-pdf feature-icon"></i>
+                <h3>Full Report Generation</h3>
+                <p>Generate comprehensive, professional PDF reports of your AI analysis to share with co-founders, mentors, or potential investors at the click of a button.</p>
+            </div>
+        </main>
+
+        <section class="cta-section panel">
+            <h2>Ready to Bring Your Idea to Life?</h2>
+            <p>Join IdeaSaarthi today and take the first step towards turning your vision into a successful venture.</p>
+            <a href="{% url 'signup' %}" class="btn">
+                Get Started Now <i class="ph-bold ph-arrow-right"></i>
+            </a>
+        </section>
+    </div>
+
+</body>
+</html>

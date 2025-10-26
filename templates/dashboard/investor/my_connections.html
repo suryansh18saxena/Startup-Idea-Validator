@@ -1,0 +1,49 @@
+{% extends "dashboard/investor/base.html" %}
+{% block title %}My Connections{% endblock %}
+
+{% block body %}
+    <main class="main-content">
+        <header class="page-header">
+            <h1>My Connections</h1>
+            <p>Track the status of your requested introductions.</p>
+        </header>
+
+        <div class="connections-list">
+            
+            {% for connection in connections %}
+            <div class="connection-card status-{{ connection.status }}">
+                
+                <div class="idea-details">
+                    <h3>{{ connection.idea.problem_statement|truncatewords:12 }}</h3>
+                    <p>Founder: {{ connection.idea.user.username }}</p>
+
+                    {% if connection.status == 'accepted' %}
+                        <p class="contact-email">
+                            <strong>Contact:</strong> {{ connection.idea.user.email }}
+                        </p>
+                    {% else %}
+                        <p class="contact-info">
+                            <strong>Contact:</strong> 
+                            {% if connection.status == 'rejected' %}Not Available{% else %}Awaiting Approval{% endif %}
+                        </p>
+                    {% endif %}
+                </div>
+
+                <span class="status-tag status-{{ connection.status }}">
+                    {{ connection.status|capfirst }}
+                </span>
+            </div>
+
+            {% empty %}
+            <div class="connection-card">
+                <div class="idea-details">
+                    <h3>No connections found.</h3>
+                    <p>You have not requested any introductions yet.</p>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+        </main>
+
+{% endblock %}

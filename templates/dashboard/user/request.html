@@ -1,0 +1,122 @@
+{% extends "home/base.html" %}
+
+{% block title %}Connection Requests{% endblock %}
+
+{% block button %}{% endblock %}
+
+{% block printbutton %} {% endblock %}
+
+
+{% block body %}
+<style>
+    /* --- Page-Specific Styles for Requests --- */
+    .main-content {
+        margin-left: 220px;
+        padding: 2rem;
+    }
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 2.5rem;
+        color: var(--primary);
+    }
+    .pending-requests {
+        background: var(--bg-secondary, #fff);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: var(--shadow-md);
+    }
+    .idea-card {
+        border: 1px solid var(--border-light);
+        border-left: 4px solid var(--primary);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .idea-content h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .idea-actions { display: flex; gap: 1rem; }
+    .btn-accept, .btn-decline {
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+    }
+    .btn-accept { background-color: #d1fae5; color: #065f46; }
+    .btn-decline { background-color: #fee2e2; color: #b91c1c; }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #fff;
+    }
+    .status-badge.accepted {
+        background: var(--success, #28a745);
+    }
+    .status-badge.rejected {
+        background: var(--danger, #dc3545);
+    }
+
+</style>
+
+<div class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">Investor Connection Requests</h1>
+        <p class="page-subtitle">Manage requests from investors interested in your ideas.</p>
+    </div>
+
+    <div class="pending-requests">
+        {% for req in pending_requests %}
+        <div class="idea-card">
+            <div class="idea-content">
+                <h3>Interest in: "{{ req.idea.problem_statement|truncatewords:10 }}"</h3>
+                <p><strong>{{ req.investor.get_full_name|default:req.investor.username }}</strong> has requested an introduction.</p>
+            </div>
+            <div class="idea-actions">
+                <a href="{% url 'handle_connection' req.id 'accept' %}" class="btn-accept">Accept</a>
+                <a href="{% url 'handle_connection' req.id 'reject' %}" class="btn-decline">Decline</a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 2rem;">
+            <p>You have no new investor requests.</p>
+        </div>
+        {% endfor %}
+
+
+    <div class="history-panel panel">
+    <h2>Connection History</h2>
+    <ul class="request-list">
+        {% for conn in handled_requests %}
+        <li class="request-item">
+            <div class="request-info">
+                <span class="investor-name">{{ conn.investor.username }}</span>
+                <p>Requested introduction for: <strong>{{ conn.idea.problem_statement|truncatewords:10 }}</strong></p>
+            </div>
+            
+            <div class="request-actions">
+                {% if conn.status == 'accepted' %}
+                    <span class="status-badge accepted">Accepted</span>
+                {% elif conn.status == 'rejected' %}
+                    <span class="status-badge rejected">Rejected</span>
+                {% endif %}
+            </div>
+        </li>
+        {% empty %}
+        <li class="request-item">
+            <p>You have not handled any requests yet.</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+    </div>
+
+</div>
+{% endblock %}

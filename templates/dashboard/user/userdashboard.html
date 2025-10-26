@@ -1,287 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | IdeaSaarthi </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-primary: #FAFBFC;
-            --bg-secondary: #FFFFFF;
-            --bg-accent: #F8F9FB;
-            --border-light: #E5E7EB;
-            --border-medium: #D1D5DB;
-            --text-primary: #1F2937;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            --primary: #4F46E5;
-            --primary-dark: #3730A3;
-            --secondary: #06B6D4;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
-            --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
-            --gradient-soft: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%);
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+{% extends "home/base.html" %}
+
+{% block title %}User Dashboard{% endblock %}
+
+
+
+{% block printbutton %} {% endblock %}
+
+
+{% block body %}
+<style>
+    /* --- Page-Specific Styles for Dashboard --- */
+    .main-content {
+        padding: 2rem 3rem;
+        margin-left: 220px; /* Adjusted to match base.html sidebar width */
+    }
+
+    .panel {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .welcome-panel {
+        padding: 2.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        background-image: var(--gradient-soft);
+    }
+
+    .welcome-panel h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-panel p {
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: center;
+    }
+
+    .stat-card .icon {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card h3 {
+        font-size: 2.25rem;
+    }
+
+    .stat-card p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .ideas-panel h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .idea-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .idea-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .idea-item:hover {
+        transform: scale(1.02);
+        box-shadow: var(--shadow-md);
+    }
+
+    .idea-info {
+        flex-grow: 1;
+    }
+
+    .idea-info .title {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .idea-info .date {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .idea-score {
+        text-align: center;
+        margin: 0 1.5rem;
+    }
+
+    .idea-score .score-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .idea-score .score-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0;
+            padding: 1rem;
+        }
+    }
+      @keyframes move {
+            100% { transform: translate3d(0, 0, 1px) rotate(360deg); }
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); font-size: 16px; overflow-x: hidden; }
-        h1, h2, h3 { font-weight: 600; }
-
-        /* --- DASHBOARD LAYOUT & SIDEBAR --- */
-        .dashboard-container { display: flex; }
-        .sidebar { width: 260px; height: 100vh; background-color: var(--bg-secondary); border-right: 1px solid var(--border-light); padding: 2rem; display: flex; flex-direction: column; position: fixed; left: 0; top: 0; z-index: 200; transition: transform 0.4s ease-in-out; }
-        .sidebar-logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 600; margin-bottom: 2.5rem; }
-        .sidebar-logo i { font-size: 2rem; color: var(--primary); }
-        .sidebar-nav ul { list-style: none; }
-        .sidebar-nav a { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1rem; border-radius: 12px; text-decoration: none; color: var(--text-secondary); font-weight: 500; transition: all 0.3s ease; margin-bottom: 0.5rem; }
-        .sidebar-nav a:hover { background: var(--gradient-soft); color: var(--text-primary); }
-        .sidebar-nav a.active { color: var(--primary); background: var(--gradient-soft); font-weight: 600; }
-        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 2rem 3rem; transition: margin-left 0.4s ease-in-out; }
-        
-        /* --- DASHBOARD HEADER --- */
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .dashboard-header .greeting h1 { font-size: 1.75rem; }
-        .dashboard-header .greeting p { color: var(--text-secondary); }
-        .dashboard-header .header-actions .btn { padding: 0.75rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 500; border: none; background: var(--gradient-primary); color: #FFFFFF; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; }
-        .dashboard-header .header-actions .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-        
-        /* --- DASHBOARD GRID & PANELS--- */
-        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: flex-start; }
-        .panel { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 16px; padding: 2rem; }
-        .panel h2 { font-size: 1.25rem; margin-bottom: 1.5rem; }
-
-        /* --- SWOT PANEL --- */
-        .swot-panel .panel-header { border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; margin-bottom: 1.5rem; }
-        .swot-panel .idea-title { font-size: 1.5rem; text-align: center; margin-bottom: 1.5rem; }
-        .score-display { position: relative; width: 180px; height: 180px; margin: 0 auto 2rem auto; }
-        .score-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
-        .score-text h2 { font-size: 2.75rem; font-weight: 700; color: var(--text-primary); line-height: 1; margin: 0; }
-        .score-text p { font-size: 0.9rem; font-weight: 500; color: var(--success); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* NEW: KPI Metric Card Styles */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+        .background {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            background: var(--bg-primary);
+            overflow: hidden;
+            z-index: -1;
         }
-        .kpi-card {
-            background: var(--bg-secondary);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 5px solid;
-            box-shadow: var(--shadow-sm);
-        }
-        .kpi-card h3 {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .kpi-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-        .kpi-card.strengths { border-color: var(--success); }
-        .kpi-card.strengths .kpi-value { color: var(--success); }
-        .kpi-card.weaknesses { border-color: var(--warning); }
-        .kpi-card.weaknesses .kpi-value { color: var(--warning); }
-        .kpi-card.opportunities { border-color: var(--secondary); }
-        .kpi-card.opportunities .kpi-value { color: var(--secondary); }
-        .kpi-card.threats { border-color: var(--danger); }
-        .kpi-card.threats .kpi-value { color: var(--danger); }
-        
-        .detailed-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-        .chart-container { background-color: var(--bg-accent); border-radius: 12px; padding: 1.5rem; }
-        .chart-container h3 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 1.1rem; }
-        .chart-container.strengths h3 { color: var(--success); }
-        .chart-container.weaknesses h3 { color: var(--warning); }
-        .chart-container.opportunities h3 { color: var(--secondary); }
-        .chart-container.threats h3 { color: var(--danger); }
-        
-        /* --- HISTORY PANEL --- */
-        .idea-list { list-style: none; max-height: 450px; overflow-y: auto; }
-        .idea-list a { display: block; padding: 1rem; border-radius: 10px; text-decoration: none; transition: all 0.3s ease; margin-bottom: 0.5rem; border: 1px solid transparent; }
-        .idea-list a:hover { background-color: var(--bg-accent); border-color: var(--border-light); }
-        .idea-list a.active { background: var(--gradient-soft); border-color: rgba(79, 70, 229, 0.2); }
-        .idea-list .idea-name { font-weight: 600; color: var(--text-primary); }
-        .idea-list .idea-date { font-size: 0.875rem; color: var(--text-secondary); }
 
-        /* --- RESPONSIVE DESIGN --- */
-        @media (max-width: 1400px) {
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        .background span {
+            width: 20vmin;
+            height: 20vmin;
+            border-radius: 20vmin;
+            backface-visibility: hidden;
+            position: absolute;
+            animation: move;
+            animation-duration: 45s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
         }
-        @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 992px) { .detailed-charts-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .main-content { margin-left: 0; width: 100%; padding: 1.5rem; }
-            body.sidebar-visible .sidebar { transform: translateX(0); }
-            .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-        }
-        @media (max-width: 576px) {
-            .kpi-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo"><i class="ph-fill ph-rocket-launch"></i><span>IdeaSaarthi</span></div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="{% url 'home' %}" class="active"><i class="ph-fill ph-squares-four"></i> Home</a></li>
-                    <li><a href="{% url 'userdashboard' %}"><i class="ph-fill ph-lightbulb"></i> Submit New Idea</a></li>
-                    <li><a href="{% url 'manage_ideas' %}"><i class="ph-fill ph-clock-counter-clockwise"></i> History</a></li>
-                    <li><a href="#"><i class="ph-fill ph-user"></i> Profile</a></li>
-                    <li><a href="{% url 'logout' %}"><i class="ph-fill ph-sign-out"></i> Logout</a></li>
-                </ul>
-            </nav>
-        </aside>
 
-        <main class="main-content">
-            <header class="dashboard-header">
-                <div class="greeting">
-                {% if user.is_authenticated %}
-                <p>Welcome, {{ user.first_name }}</p>
-                {% endif %}
-                </div>
-                <div class="header-actions">
-                    <a href="{% url 'userdashboard' %}" class="btn"><i class="ph-fill ph-plus-circle"></i> Submit New Idea</a>
-                </div>
-            </header>
+        .background span:nth-child(1) { color: var(--secondary); top: 29%; left: 4%; animation-duration: 49s; animation-delay: -2s; transform-origin: 1vw -2vh; box-shadow: -40vmin 0 5.2vmin currentColor; }
+       .background span:nth-child(2) { color: var(--danger); top: 58%; left: 2%; animation-duration: 47s; animation-delay: -4s; transform-origin: -16vw 1vh; box-shadow: 40vmin 0 5.5vmin currentColor; }
+       .background span:nth-child(3) { color: var(--success); top: 51%; left: 98%; animation-duration: 43s; animation-delay: -5s; transform-origin: 19vw -18vh; box-shadow: 40vmin 0 5.8vmin currentColor; }
+       .background span:nth-child(4) { color: var(--primary); top: 44%; left: 51%; animation-duration: 45s; animation-delay: -9s; transform-origin: -10vw 2vh; box-shadow: 40vmin 0 5.8vmin currentColor; }
+       .background span:nth-child(5) { color: var(--secondary); top: 88%; left: 81%; animation-duration: 43s; animation-delay: -11s; transform-origin: 7vw -11vh; box-shadow: -40vmin 0 5.2vmin currentColor; }
+       .background span:nth-child(6) { color: var(--primary); top: 8%; left: 11%; animation-duration: 41s; animation-delay: -14s; transform-origin: 1vw 12vh; box-shadow: -40vmin 0 5.1vmin currentColor; }
 
-            <div class="dashboard-grid">
-                <div class="panel">
-                    <div class="panel-header">
-                        <h2 class="idea-title">AI-Powered Meal Planner</h2>
-                        <div class="score-display">
-                            <canvas id="scoreDonutChart"></canvas>
-                            <div class="score-text">
-                                <h2>88%</h2>
-                                <p>High Potential</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="kpi-grid">
-                        <div class="kpi-card strengths">
-                            <h3><i class="ph-fill ph-trend-up"></i> Strengths</h3>
-                            <div class="kpi-value">85</div>
-                        </div>
-                         <div class="kpi-card weaknesses">
-                            <h3><i class="ph-fill ph-trend-down"></i> Weaknesses</h3>
-                            <div class="kpi-value">40</div>
-                        </div>
-                         <div class="kpi-card opportunities">
-                            <h3><i class="ph-fill ph-sparkle"></i> Opportunities</h3>
-                            <div class="kpi-value">75</div>
-                        </div>
-                         <div class="kpi-card threats">
-                            <h3><i class="ph-fill ph-shield-warning"></i> Threats</h3>
-                            <div class="kpi-value">30</div>
-                        </div>
-                    </div>
+</style>
 
-                    <div class="detailed-charts-grid">
-                        <div class="chart-container strengths">
-                            <h3>Strengths Details</h3>
-                            <canvas id="strengthsChart"></canvas>
-                        </div>
-                        <div class="chart-container weaknesses">
-                            <h3>Weaknesses Details</h3>
-                            <canvas id="weaknessesChart"></canvas>
-                        </div>
-                        <div class="chart-container opportunities">
-                            <h3>Opportunities Details</h3>
-                            <canvas id="opportunitiesChart"></canvas>
-                        </div>
-                        <div class="chart-container threats">
-                             <h3>Threats Details</h3>
-                            <canvas id="threatsChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="history-panel panel">
-                    <h2>Idea History</h2>
-                    <ul class="idea-list">
-                        <li><a href="#" class="active"><div class="idea-name">AI-Powered Meal Planner</div><div class="idea-date">Submitted: 20 Jul 2025</div></a></li>
-                        <li><a href="#"><div class="idea-name">Eco-friendly Packaging Marketplace</div><div class="idea-date">Submitted: 02 Jun 2025</div></a></li>
-                        <li><a href="#"><div class="idea-name">Virtual Reality Language Tutor</div><div class="idea-date">Submitted: 18 Apr 2025</div></a></li>
-                        <li><a href="#"><div class="idea-name">Local Artisan Discovery App</div><div class="idea-date">Submitted: 11 Feb 2025</div></a></li>
-                    </ul>
-                </div>
+<main class="main-content">
+     <div class="background">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="welcome-panel panel">
+        <h1>Your Creative Hub</h1>
+        <p>This is where your journey begins. Submit your brilliant ideas, get AI-powered analysis, and connect with investors to turn your vision into reality.</p>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="ph-fill ph-lightbulb icon"></i>
+                <h3>{{ ideas_count|default:0 }}</h3>
+                <p>Total Ideas</p>
             </div>
-        </main>
+            <div class="stat-card">
+                <i class="ph-fill ph-handshake icon"></i>
+                <h3>{{ connections_count|default:0 }}</h3>
+                <p>Connections</p>
+            </div>
+            <div class="stat-card">
+                <i class="ph-fill ph-chart-line-up icon"></i>
+                <h3>{{ average_score|default:0 }}</h3>
+                <p>Average Score</p>
+            </div>
+        </div>
     </div>
 
- <script> 
-        document.addEventListener('DOMContentLoaded', () => {
-            const FONT_COLOR = '#6B7280';
-            const BORDER_COLOR = 'rgba(0, 0, 0, 0.05)';
-
-            // 1. Donut Chart for Overall Score
-            const scoreCtx = document.getElementById('scoreDonutChart').getContext('2d');
-            new Chart(scoreCtx, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [88, 12],
-                        backgroundColor: [ getComputedStyle(document.documentElement).getPropertyValue('--success'), getComputedStyle(document.documentElement).getPropertyValue('--border-light') ],
-                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary'),
-                        borderWidth: 4,
-                        borderRadius: 8,
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '80%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                    events: []
-                }
-            });
-            
-            // NOTE: The Radar Chart JavaScript has been removed.
-
-            // Helper function to create horizontal bar charts
-            const createBarChart = (canvasId, chartLabels, chartData, chartColor) => {
-                const ctx = document.getElementById(canvasId).getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: chartLabels,
-                        datasets: [{ label: 'Score', data: chartData, backgroundColor: chartColor, borderRadius: 4 }]
-                    },
-                    options: {
-                        indexAxis: 'y', responsive: true,
-                        scales: {
-                            x: { beginAtZero: true, max: 100, grid: { display: false }, ticks: { display: false } },
-                            y: { grid: { display: false }, ticks: { color: FONT_COLOR } }
-                        },
-                        plugins: { legend: { display: false } }
-                    }
-                });
-            };
-
-            // 2. Detailed Bar Charts
-            createBarChart('strengthsChart', ['Personalization', 'API Integration', 'Market Growth'], [90, 80, 85], '#10B981');
-            createBarChart('weaknessesChart', ['User Onboarding', 'API Reliance', 'Content Need'], [50, 60, 45], '#F59E0B');
-            createBarChart('opportunitiesChart', ['Influencer Partnerships', 'Corporate Wellness', 'Subscription Box'], [80, 75, 70], '#06B6D4');
-            createBarChart('threatsChart', ['High Competition', 'Changing Trends', 'Data Privacy'], [65, 55, 40], '#EF4444');
-        });
-</script> 
-</body>
-</html>
+    <div class="ideas-panel panel">
+        <h2>Recent Ideas</h2>
+        <ul class="idea-list">
+            {% for idea in last_5_ideas %}
+            <li class="idea-item">
+                <div class="idea-info">
+                    <span class="title">{{ idea.problem_statement|truncatewords:10 }}</span>
+                    <span class="date">Submitted: {{ idea.created_at|date:"d M, Y" }}</span>
+                </div>
+                <div class="idea-score">
+                    <div class="score-value">{{ idea.score|default:0 }}</div>
+                    <div class="score-label">Score</div>
+                </div>
+                <a href="{% url 'analyze_idea' idea.id %}" class="btn" style="background: var(--primary-dark);">View</a>
+            </li>
+            {% empty %}
+            <li class="idea-item">
+                <div class="idea-info">
+                    <span class="title">No ideas submitted yet.</span>
+                    <span class="date">Let's get started!</span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</main>
+{% endblock %}

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -85,6 +87,7 @@
       pointer-events: none;
       z-index: 0;
     }
+    
 
     .floating-shape {
       position: absolute;
@@ -244,7 +247,7 @@
 
     /* This new class will be added via JavaScript on scroll */
     .main-header.header-scrolled {
-      border-radius: ;
+      border-radius: 30px;
       /* Scrolled state: Rounded corners */
       box-shadow: var(--shadow-sm);
       /* Scrolled state: Add shadow for depth */
@@ -1124,8 +1127,7 @@
 
         <nav class="nav-links">
           {% if request.user.is_authenticated %}
-          <a href="#features">Community</a>
-          <a href="#process">Market Analysis</a>
+          <a href="{% url 'about' %}">About</a>
           <a href="{% url 'dashboard' %}">Go to Dashboard</a>
           {% endif %}
         </nav>
@@ -1155,7 +1157,7 @@
       <section id="hero" class="parallax-container">
         <div class="hero-text animate-on-scroll">
           <span class="platform-tag">#1 Validation Platform</span>
-          <h1 data-type-effect="Validate Your Startup Idea with" class="gradient-text">
+          <h1 data-type-effect="Validate Your Startup Idea with IdeaSaarthi" class="gradient-text">
             AI-Powered Insights
           </h1>
           <p>
