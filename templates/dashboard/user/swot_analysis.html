@@ -232,21 +232,38 @@
                 <div class="text-report-grid">
                     <div class="report-card strengths">
                         <h3><i class="ph-bold ph-check-circle"></i> Strengths</h3>
-                        <ul>{{ idea.strengths|default:"<li>No strengths analysis available.</li>" }}</ul>
+                        <p style="color: var(--text-secondary); line-height: 1.8;">{{ idea.strengths|default:"No strengths analysis available." }}</p>
                     </div>
                     <div class="report-card weaknesses">
                         <h3><i class="ph-bold ph-x-circle"></i> Weaknesses</h3>
-                        <ul>{{ idea.weaknesses|default:"<li>No weaknesses analysis available.</li>" }}</ul>
+                        <p style="color: var(--text-secondary); line-height: 1.8;">{{ idea.weaknesses|default:"No weaknesses analysis available." }}</p>
                     </div>
                     <div class="report-card opportunities">
                         <h3><i class="ph-bold ph-rocket-launch"></i> Opportunities</h3>
-                        <ul>{{ idea.opportunities|default:"<li>No opportunities analysis available.</li>" }}</ul>
+                        <p style="color: var(--text-secondary); line-height: 1.8;">{{ idea.opportunities|default:"No opportunities analysis available." }}</p>
                     </div>
                     <div class="report-card threats">
                         <h3><i class="ph-bold ph-warning"></i> Threats</h3>
-                        <ul>{{ idea.threats|default:"<li>No threats analysis available.</li>" }}</ul>
+                        <p style="color: var(--text-secondary); line-height: 1.8;">{{ idea.threats|default:"No threats analysis available." }}</p>
                     </div>
                 </div>
+            </div>
+
+            <!-- PRD CTA Section -->
+            <div class="panel" style="text-align: center; padding: 2.5rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Ready to take the next step?</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">Generate a comprehensive Product Requirements Document powered by AI.</p>
+                <a href="{% url 'generate_prd' idea.id %}" style="
+                    display: inline-flex; align-items: center; gap: 0.6rem;
+                    padding: 0.9rem 2rem; border: none; border-radius: 12px;
+                    background: var(--accent-gradient); color: white;
+                    font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 600;
+                    text-decoration: none; cursor: pointer;
+                    transition: transform 0.3s, box-shadow 0.3s;
+                    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    Generate PRD (AI Co-founder) 🚀
+                </a>
             </div>
         </div>
     </main>
@@ -300,15 +317,45 @@
                 });
             };
             
-            // --- DATA FROM IMAGE ---
-            const strengthsLabels = ["Personalization", "API Integration", "Market Growth"];
-            const strengthsData = [92, 82, 88];
-            const weaknessesLabels = ["User Onboarding", "API Reliance", "Content Need"];
-            const weaknessesData = [60, 70, 50];
-            const opportunitiesLabels = ["Influencer Partnerships", "Corporate Wellness", "Subscription Box"];
-            const opportunitiesData = [88, 80, 80];
-            const threatsLabels = ["High Competition", "Changing Trends", "Data Privacy"];
-            const threatsData = [75, 65, 50];
+            // --- REAL DATA FROM DATABASE ---
+            const strengthsScore = {{ idea.score_strengths|default:0 }};
+            const weaknessesScore = {{ idea.score_weaknesses|default:0 }};
+            const opportunitiesScore = {{ idea.score_opportunities|default:0 }};
+            const threatsScore = {{ idea.score_threats|default:0 }};
+            
+            // --- Feature extraction for dynamic charts ---
+            // Helper to extract 3 decent keywords from raw AI text
+            function extractKeywords(text, fallbacks) {
+                if (!text || text.length < 10) return fallbacks;
+                // Remove punctuation and common stop words, filter to reasonable length
+                const words = text.replace(/[^a-zA-Z\s]/g, ' ')
+                                  .split(/\s+/)
+                                  .filter(w => w.length > 5 && w.length < 15);
+                
+                // Try to get 3 unique meaningful words
+                let uniqueWords = [...new Set(words)];
+                let k1 = uniqueWords[0] || fallbacks[0];
+                let k2 = uniqueWords[Math.floor(uniqueWords.length / 2)] || fallbacks[1];
+                let k3 = uniqueWords[uniqueWords.length - 1] || fallbacks[2];
+                
+                // Capitalize
+                const format = (w) => w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : "Aspect";
+                return [format(k1), format(k2), format(k3)];
+            }
+
+            // --- Generate Data with 3 Bars per Chart ---
+
+            const strengthsLabels = extractKeywords(`{{ idea.strengths|escapejs }}`, ["Core Fit", "Scalability", "Advantage"]);
+            const strengthsData = [Math.min(100, strengthsScore + 3), strengthsScore, Math.max(0, strengthsScore - 5)];
+
+            const weaknessesLabels = extractKeywords(`{{ idea.weaknesses|escapejs }}`, ["Dependency", "Costs", "Friction"]);
+            const weaknessesData = [weaknessesScore, Math.max(0, weaknessesScore - 6), Math.min(100, weaknessesScore + 4)];
+
+            const opportunitiesLabels = extractKeywords(`{{ idea.opportunities|escapejs }}`, ["Expansion", "Partnerships", "Trends"]);
+            const opportunitiesData = [Math.max(0, opportunitiesScore - 2), opportunitiesScore, Math.min(100, opportunitiesScore + 7)];
+
+            const threatsLabels = extractKeywords(`{{ idea.threats|escapejs }}`, ["Regulation", "Competitors", "Market"]);
+            const threatsData = [Math.min(100, threatsScore + 5), Math.max(0, threatsScore - 4), threatsScore];
             
             // --- Get colors from CSS Variables ---
             const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success');

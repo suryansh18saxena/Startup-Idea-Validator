@@ -1,0 +1,305 @@
+{% extends "home/base.html" %}
+
+{% block title %}PRD Report - IdeaSaarthi{% endblock %}
+
+{% block button %}{% endblock %}
+{% block printbutton %}{% endblock %}
+
+{% block body %}
+<style>
+    :root {
+        --bg-primary: #F8F9FA;
+        --bg-secondary: #FFFFFF;
+        --border-light: #DEE2E6;
+        --text-primary: #212529;
+        --text-secondary: #495057;
+        --accent-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        --primary: #4F46E5;
+        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.07);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+
+    .main-content {
+        margin-left: 260px;
+        transition: margin-left 0.4s ease-in-out;
+    }
+
+    .prd-container {
+        width: 100%;
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 1rem;
+    }
+
+    /* --- PRD Header --- */
+    .prd-header {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-light);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .prd-header-info h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .prd-header-info p {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+
+    .btn-download {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        background: var(--accent-gradient);
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+        text-decoration: none;
+    }
+
+    .btn-download:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+    }
+
+    /* --- PRD Document Panel --- */
+    .prd-panel {
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-lg);
+        padding: 2.5rem 3rem;
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+
+    /* --- PRD Document Styling --- */
+    #prd-document h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid;
+        border-image: var(--accent-gradient) 1;
+    }
+
+    #prd-document h2 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    #prd-document h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #prd-document p {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    #prd-document ul, #prd-document ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    #prd-document li {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    #prd-document strong {
+        color: var(--text-primary);
+    }
+
+    #prd-document table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+        font-size: 0.9rem;
+    }
+
+    #prd-document th {
+        background: var(--accent-gradient);
+        color: white;
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    #prd-document th:first-child { border-radius: 8px 0 0 0; }
+    #prd-document th:last-child { border-radius: 0 8px 0 0; }
+
+    #prd-document td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-light);
+        color: var(--text-secondary);
+    }
+
+    #prd-document tr:hover td {
+        background-color: #f8f4ff;
+    }
+
+    /* --- Loading Overlay (shown while generating, hidden by default) --- */
+    .prd-loading {
+        display: none;
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .prd-loading .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid var(--border-light);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* --- Back Button --- */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.6rem 1.2rem;
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        background: white;
+        color: var(--text-secondary);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-back:hover {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border-color: var(--primary);
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 992px) {
+        .main-content { margin-left: 0; }
+        .prd-panel { padding: 1.5rem; }
+        .prd-header { position: static; }
+    }
+
+    @media (max-width: 576px) {
+        .prd-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        .prd-panel { padding: 1.25rem; }
+    }
+</style>
+
+<main class="main-content">
+    <div class="prd-container">
+
+        <!-- Header -->
+        <div class="prd-header">
+            <div class="prd-header-info">
+                <h1>📄 Product Requirements Document</h1>
+                <p>For: <strong>{{ idea.problem_statement|truncatewords:12 }}</strong></p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <a href="{% url 'analyze_idea' idea.id %}" class="btn-back">
+                    <i class="ph-bold ph-arrow-left"></i> Back to SWOT
+                </a>
+                <a href="{% url 'generate_prd' idea.id %}?regenerate=1" class="btn-back" style="border-color: #F59E0B; color: #D97706;" title="Regenerate PRD with a fresh API call">
+                    <i class="ph-bold ph-arrows-clockwise"></i> Regenerate PRD 🔄
+                </a>
+                <button id="btn-download-pdf" class="btn-download">
+                    <i class="ph-bold ph-file-pdf"></i> Download PRD as PDF 📥
+                </button>
+            </div>
+        </div>
+
+        <!-- PRD Content -->
+        <div class="prd-panel">
+            <div id="prd-document">
+                {{ prd_content|safe }}
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- html2pdf.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    document.getElementById('btn-download-pdf').addEventListener('click', function () {
+        const element = document.getElementById('prd-document');
+        const btn = this;
+
+        // Visual feedback
+        btn.innerHTML = '<i class="ph-bold ph-spinner"></i> Generating PDF...';
+        btn.disabled = true;
+
+        const opt = {
+            margin:       [0.5, 0.5, 0.5, 0.5],
+            filename:     'IdeaSaarthi_PRD.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(element).save().then(function () {
+            btn.innerHTML = '<i class="ph-bold ph-file-pdf"></i> Download PRD as PDF 📥';
+            btn.disabled = false;
+        });
+    });
+</script>
+{% endblock %}

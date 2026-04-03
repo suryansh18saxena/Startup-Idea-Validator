@@ -1,0 +1,329 @@
+{% extends "home/base.html" %}
+
+{% block title %}AI Originality Analysis{% endblock %}
+{% block button %}{% endblock %}
+{% block printbutton %}{% endblock %}
+
+{% block body %}
+<style>
+    .main-content {
+        margin-left: 220px;
+        padding: 2rem;
+    }
+    .sim-container {
+        max-width: 900px;
+        margin: 2rem auto;
+    }
+
+    /* --- Header --- */
+    .sim-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    .sim-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    .sim-header p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    /* --- Circular Progress Bar --- */
+    .score-section {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 3rem;
+    }
+    .circular-progress {
+        position: relative;
+        width: 220px;
+        height: 220px;
+    }
+    .circular-progress svg {
+        transform: rotate(-90deg);
+    }
+    .circular-progress circle {
+        fill: none;
+        stroke-width: 12;
+        stroke-linecap: round;
+    }
+    .progress-bg { stroke: #e5e7eb; }
+    .progress-bar {
+        stroke-dasharray: 628;
+        stroke-dashoffset: 628;
+        transition: stroke-dashoffset 1.5s ease-out;
+    }
+    .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+    .progress-text .percentage {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+    .progress-text .label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-top: 4px;
+    }
+
+    /* --- Verdict Badge --- */
+    .verdict-badge {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    .verdict-badge span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .verdict-green {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #34d399;
+    }
+    .verdict-yellow {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fbbf24;
+    }
+    .verdict-red {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #f87171;
+    }
+
+    /* --- Info Cards Grid --- */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+    }
+    .info-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-lg);
+        padding: 2rem;
+        transition: transform 0.3s;
+    }
+    .info-card:hover {
+        transform: translateY(-4px);
+    }
+    .info-card .card-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: inline-flex;
+        padding: 10px;
+        border-radius: 12px;
+    }
+    .info-card h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        color: var(--text-primary);
+    }
+    .info-card p, .info-card ul {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    .info-card ul {
+        list-style: none;
+        padding: 0;
+    }
+    .info-card ul li {
+        padding: 6px 0;
+        border-bottom: 1px dashed #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .info-card ul li:last-child { border-bottom: none; }
+
+    .icon-competitors { background: #fee2e2; color: #ef4444; }
+    .icon-unique { background: #d1fae5; color: #10b981; }
+    .icon-suggestion { background: #e0e7ff; color: #4f46e5; }
+    .icon-idea { background: #fef3c7; color: #f59e0b; }
+
+    /* --- Action Buttons --- */
+    .action-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    .btn-action {
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .btn-confirm {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+    }
+    .btn-confirm:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+    }
+    .btn-discard {
+        background: #f1f5f9;
+        color: var(--text-secondary);
+        border: 1px solid var(--border-light);
+    }
+    .btn-discard:hover {
+        background: #e2e8f0;
+    }
+
+    @media (max-width: 768px) {
+        .main-content { margin-left: 0; }
+        .info-grid { grid-template-columns: 1fr; }
+        .action-buttons { flex-direction: column; align-items: center; }
+    }
+</style>
+
+<div class="main-content">
+    <div class="sim-container">
+
+        <div class="sim-header">
+            <h1>🧠 AI Originality Analysis</h1>
+            <p>We scanned GitHub, Crunchbase, Y-Combinator, and the web for similar ideas.</p>
+        </div>
+
+        <!-- Circular Progress -->
+        <div class="score-section">
+            <div class="circular-progress">
+                <svg width="220" height="220" viewBox="0 0 220 220">
+                    <circle class="progress-bg" cx="110" cy="110" r="100"></circle>
+                    <circle class="progress-bar" id="progressBar" cx="110" cy="110" r="100"></circle>
+                </svg>
+                <div class="progress-text">
+                    <div class="percentage" id="percentageText">0%</div>
+                    <div class="label">Similarity</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verdict Badge -->
+        <div class="verdict-badge" id="verdictBadge"></div>
+
+        <!-- Info Cards -->
+        <div class="info-grid">
+
+            <!-- Idea Summary -->
+            <div class="info-card">
+                <div class="card-icon icon-idea"><i class="ph-fill ph-lightbulb"></i></div>
+                <h3>Your Idea Summary</h3>
+                <p><strong>Problem:</strong> {{ idea_data.problem|truncatechars:100 }}</p>
+                <p style="margin-top: 8px;"><strong>Solution:</strong> {{ idea_data.solution|truncatechars:100 }}</p>
+            </div>
+
+            <!-- Existing Competitors -->
+            <div class="info-card">
+                <div class="card-icon icon-competitors"><i class="ph-fill ph-buildings"></i></div>
+                <h3>Existing Competitors Found</h3>
+                <ul>
+                    {% for comp in similarity.existing_competitors %}
+                    <li><i class="ph-bold ph-caret-right"></i> {{ comp }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Unique Angle -->
+            <div class="info-card">
+                <div class="card-icon icon-unique"><i class="ph-fill ph-sparkle"></i></div>
+                <h3>Your Unique Angle</h3>
+                <p>{{ similarity.unique_angle }}</p>
+            </div>
+
+            <!-- Improvement Suggestion -->
+            <div class="info-card">
+                <div class="card-icon icon-suggestion"><i class="ph-fill ph-rocket-launch"></i></div>
+                <h3>Killer Feature Suggestion</h3>
+                <p>{{ similarity.improvement_suggestion }}</p>
+            </div>
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'confirm_idea' %}" class="btn-action btn-confirm">
+                <i class="ph-bold ph-check-circle"></i> Confirm & Save Idea
+            </a>
+            <a href="{% url 'create_idea' %}" class="btn-action btn-discard">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i> Go Back & Edit
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const similarityPercent = {{ similarity.similarity_percentage|default:0 }};
+        const circumference = 2 * Math.PI * 100; // r=100
+        const offset = circumference - (similarityPercent / 100) * circumference;
+
+        const bar = document.getElementById('progressBar');
+        const text = document.getElementById('percentageText');
+        const badge = document.getElementById('verdictBadge');
+
+        // Set color based on percentage
+        let strokeColor, verdictHTML;
+        if (similarityPercent <= 30) {
+            strokeColor = '#10b981'; // Green
+            verdictHTML = '<span class="verdict-green"><i class="ph-fill ph-seal-check"></i> Highly Original — You\'re onto something unique!</span>';
+        } else if (similarityPercent <= 60) {
+            strokeColor = '#f59e0b'; // Yellow
+            verdictHTML = '<span class="verdict-yellow"><i class="ph-fill ph-warning-circle"></i> Moderate Overlap — Consider adding a differentiator.</span>';
+        } else {
+            strokeColor = '#ef4444'; // Red
+            verdictHTML = '<span class="verdict-red"><i class="ph-fill ph-x-circle"></i> High Similarity — This idea already exists. Pivot recommended.</span>';
+        }
+
+        bar.style.stroke = strokeColor;
+        text.querySelector('.percentage').style.color = strokeColor;
+        badge.innerHTML = verdictHTML;
+
+        // Animate
+        setTimeout(() => {
+            bar.style.strokeDashoffset = offset;
+        }, 100);
+
+        // Animate number count
+        let counter = 0;
+        const interval = setInterval(() => {
+            if (counter >= similarityPercent) {
+                clearInterval(interval);
+            } else {
+                counter++;
+                text.querySelector('.percentage').textContent = counter + '%';
+            }
+        }, 20);
+    });
+</script>
+{% endblock %}
