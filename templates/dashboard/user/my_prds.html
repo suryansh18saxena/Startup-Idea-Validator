@@ -1,0 +1,175 @@
+{% extends "home/base.html" %}
+
+{% block title %}My PRD Reports{% endblock %}
+
+{% block button %}{% endblock %}
+
+{% block printbutton %}{% endblock %}
+
+{% block body %}
+<style>
+    .main-content {
+        margin-left: 220px;
+        padding: 2rem;
+    }
+    .page-header {
+        text-align: center;
+        margin: 2rem 0;
+    }
+    .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .prd-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        padding: 1rem;
+    }
+    .prd-card {
+        background: #FFFFFF;
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-light);
+        transition: transform 0.3s, box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .prd-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .prd-header {
+        background: var(--gradient-soft);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .prd-header h3 {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 1.25rem;
+        line-height: 1.4;
+    }
+    .prd-date {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .prd-content-preview {
+        padding: 1.5rem;
+        flex-grow: 1;
+    }
+    .prd-content-preview p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .prd-actions {
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        gap: 1rem;
+    }
+    .btn-action {
+        flex: 1;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .btn-view {
+        background: var(--gradient-primary);
+        color: white;
+    }
+    .btn-view:hover {
+        box-shadow: 0 8px 15px rgba(79, 70, 229, 0.3);
+    }
+    .btn-edit {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+    }
+    .btn-edit:hover {
+        background: #eef2ff;
+    }
+
+    @media (max-width: 768px) {
+        .main-content { margin-left: 0; }
+        .prd-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">My PRD Reports</h1>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem;">Access and edit your AI-generated Product Requirements Documents.</p>
+    </div>
+
+    {% if messages %}
+    <div style="margin: 1rem 2rem;">
+        {% for message in messages %}
+        <div style="padding: 1rem; border-radius: 8px; margin-bottom: 1rem; {% if message.tags == 'success' %}background: #d1fae5; color: #065f46; border: 1px solid #34d399;{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="prd-grid">
+        {% if prds %}
+            {% for idea in prds %}
+            <div class="prd-card">
+                <div class="prd-header">
+                    <h3>{{ idea.problem_statement|truncatechars:60|default:"Untitled Idea" }}</h3>
+                    <div class="prd-date">
+                        <i class="ph-fill ph-calendar-blank"></i> Generated on {{ idea.updated_at|date:"F j, Y" }}
+                    </div>
+                </div>
+                <div class="prd-content-preview">
+                    <!-- Strip HTML tags for the preview securely using Django builtin filter -->
+                    <p>{{ idea.prd_content|striptags|truncatechars:150 }}</p>
+                </div>
+                <div class="prd-actions">
+                    <a href="{% url 'generate_prd' idea.id %}" class="btn-action btn-view">
+                        <i class="ph-bold ph-eye"></i> View PDF
+                    </a>
+                    <a href="{% url 'edit_prd' idea.id %}" class="btn-action btn-edit">
+                        <i class="ph-bold ph-pencil-simple"></i> Edit PRD
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: #fff; border-radius: 16px; border: 1px dashed var(--border-light);">
+                <i class="ph-fill ph-file-dashed" style="font-size: 4rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                <h3 style="color: var(--text-primary); font-size: 1.5rem;">No PRDs yet</h3>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem; margin-bottom: 1.5rem;">You haven't generated any Product Requirements Documents yet.</p>
+                <a href="{% url 'manage_ideas' %}" class="btn-action btn-view" style="display: inline-flex; width: auto; padding: 0.8rem 2rem;">
+                    Go to Ideas to Generate PRD
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

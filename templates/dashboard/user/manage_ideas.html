@@ -11,10 +11,12 @@
         margin-left: 220px;
         padding: 2rem;
     }
+
     .page-header {
         text-align: center;
         margin: 2rem 0;
     }
+
     .page-title {
         font-size: 3rem;
         font-weight: 700;
@@ -22,6 +24,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
+
     .idea-card {
         background: #FFFFFF;
         border-radius: 16px;
@@ -30,9 +33,11 @@
         border: 1px solid var(--border-light);
         transition: box-shadow 0.3s;
     }
+
     .idea-card:hover {
         box-shadow: var(--shadow-lg);
     }
+
     .idea-card-header {
         padding: 20px 24px;
         display: flex;
@@ -40,18 +45,23 @@
         align-items: center;
         cursor: pointer;
     }
+
     .idea-summary h3 {
         color: var(--text-primary);
     }
+
     .idea-summary p {
         color: var(--text-secondary);
         font-size: 0.8rem;
     }
-    .idea-meta, .idea-actions {
+
+    .idea-meta,
+    .idea-actions {
         display: flex;
         align-items: center;
         gap: 10px;
     }
+
     .idea-score {
         font-weight: 700;
         font-size: 1.5rem;
@@ -59,12 +69,14 @@
         text-align: center;
         margin-right: 20px;
     }
+
     .idea-score span {
         font-size: 0.8rem;
         display: block;
         color: var(--text-secondary);
         font-weight: 500;
     }
+
     .btn {
         padding: 8px 16px;
         border: none;
@@ -75,20 +87,130 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    .btn-edit { background-color: #eef2ff; color: var(--primary); }
-    .btn-delete { background-color: #fee2e2; color: #ef4444; }
-    .btn-primary { background-color: var(--primary); color: white; }
-    .expand-icon { font-size: 1.5rem; color: var(--text-secondary); transition: transform 0.3s ease; }
-    .idea-card-header.active .expand-icon { transform: rotate(180deg); }
-    .idea-card-content { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out; padding: 0 24px; border-top: 1px solid var(--border-light); }
-    .idea-card-content.show { opacity: 1; padding: 24px; }
-    .detail-item { margin-bottom: 16px; }
-    .detail-item h4 { font-weight: 600; color: var(--text-primary); }
+
+    .btn-edit {
+        background-color: #eef2ff;
+        color: var(--primary);
+    }
+
+    .btn-delete {
+        background-color: #fee2e2;
+        color: #ef4444;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .expand-icon {
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        transition: transform 0.3s ease;
+    }
+
+    .idea-card-header.active .expand-icon {
+        transform: rotate(180deg);
+    }
+
+    .idea-card-content {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+        padding: 0 24px;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .idea-card-content.show {
+        opacity: 1;
+        padding: 24px;
+    }
+
+    .detail-item {
+        margin-bottom: 16px;
+    }
+
+    .detail-item h4 {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
     .detail-item p { color: var(--text-secondary); white-space: pre-wrap; }
 
+    /* --- Blockchain UI Component Styles --- */
+    .blockchain-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        margin-top: 8px;
+    }
+    
+    .blockchain-panel {
+        background: linear-gradient(to right, #f0fdf4, #ffffff);
+        border: 1px solid #bbf7d0;
+        border-left: 4px solid var(--success);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 24px;
+        margin-bottom: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .blockchain-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #166534;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    .blockchain-hash-box {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        color: #475569;
+        word-break: break-all;
+    }
+    
+    .blockchain-verify-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--success);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: transform 0.2s;
+    }
+    
+    .blockchain-verify-link:hover {
+        transform: translateX(4px);
+    }
+
     @media (max-width: 768px) {
-        .main-content { margin-left: 0; }
-        .idea-card-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+        .main-content {
+            margin-left: 0;
+        }
+
+        .idea-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
     }
 </style>
 
@@ -96,101 +218,126 @@
     <div class="page-header">
         <h1 class="page-title">Manage Your Ideas</h1>
     </div>
-        {% if ideas %}
-        {% for idea in ideas %}
-        <div class="idea-card">
-            <div class="idea-card-header">
-                <div class="idea-summary">
-                    <h3>{{ idea.problem_statement|default:"Not provided." }}</h3>
-                    <p>Last updated: {{ idea.updated_at|date:"F j, Y" }}</p>
+    {% if ideas %}
+    {% for idea in ideas %}
+    <div class="idea-card">
+        <div class="idea-card-header">
+            <div class="idea-summary">
+                <h3>{{ idea.problem_statement|default:"Not provided." }}</h3>
+                <p>Last updated: {{ idea.updated_at|date:"F j, Y" }}</p>
+                {% if idea.blockchain_tx_hash %}
+                <div class="blockchain-badge">
+                    <i class="ph-fill ph-check-circle"></i> Secured on Algorand
                 </div>
-                <div class="idea-meta">
-                    <div class="idea-score">
-                        {{ idea.score|default:0 }} <span>Score</span>
-                    </div>
-                    <div class="idea-actions">
-                        <a href="{% url 'edit_ideas' idea.id %}" class="btn btn-edit">Edit</a>
-                        <form action="{% url 'delete_ideas' idea.id %}" method="post"
-                            onsubmit="return confirm('Are you sure you want to delete this idea?');">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-delete">Delete</button>
-                        </form>
-                        
-                        <a href="{% url 'analyze_idea' idea.id %}" class="btn btn-primary">Analyze</a>
+                {% endif %}
+            </div>
+            <div class="idea-meta">
+                <div class="idea-score">
+                    {{ idea.score|default:0 }} <span>Score</span>
+                </div>
+                <div class="idea-actions">
+                    <a href="{% url 'edit_ideas' idea.id %}" class="btn btn-edit">Edit</a>
+                    <form action="{% url 'delete_ideas' idea.id %}" method="post"
+                        onsubmit="return confirm('Are you sure you want to delete this idea?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-delete">Delete</button>
+                    </form>
 
+                    <a href="{% url 'analyze_idea' idea.id %}" class="btn btn-primary">Analyze</a>
+
+                </div>
+                <i class="expand-icon ph ph-caret-down"></i>
+            </div>
+        </div>
+        <div class="idea-card-content">
+            <div class="detail-item">
+                <h4>Problem Statement</h4>
+                <p>{{ idea.problem_statement }}</p>
+            </div>
+            <div class="detail-item">
+                <h4>Your Solution</h4>
+                <p>{{ idea.solution }}</p>
+            </div>
+            <div class="detail-item">
+                <h4>Target Market</h4>
+                <p>{{ idea.market }}</p>
+            </div>
+            <div class="detail-item">
+                <h4>Unique Value Proposition</h4>
+                <p>{{ idea.unique_value }}</p>
+            </div>
+            <div class="detail-item">
+                <h4>Revenue Model</h4>
+                <p>{{ idea.revenue_model }}</p>
+            </div>
+            <div class="detail-item">
+                <h4>Known Competitors</h4>
+                <p>{{ idea.known_competitors }}</p>
+            </div>
+
+            {% if idea.blockchain_tx_hash %}
+            <!-- Blockchain Verification Panel -->
+            <div class="blockchain-panel">
+                <div class="blockchain-panel-title">
+                    <i class="ph-fill ph-lock-key"></i> Cryptographically Secured
+                </div>
+                <div>
+                    <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 6px;">Digital Fingerprint (SHA-256 Hash):</p>
+                    <div class="blockchain-hash-box">
+                        {{ idea.idea_hash }}
                     </div>
-                    <i class="expand-icon ph ph-caret-down"></i>
+                </div>
+                <div>
+                    <a href="https://testnet.explorer.perawallet.app/tx/{{ idea.blockchain_tx_hash }}" target="_blank" class="blockchain-verify-link">
+                        Verify Proof on Blockchain Explorer <i class="ph-bold ph-arrow-up-right"></i>
+                    </a>
                 </div>
             </div>
-            <div class="idea-card-content">
-                <div class="detail-item">
-                    <h4>Problem Statement</h4>
-                    <p>{{ idea.problem_statement }}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Your Solution</h4>
-                    <p>{{ idea.solution }}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Target Market</h4>
-                    <p>{{ idea.market }}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Unique Value Proposition</h4>
-                    <p>{{ idea.unique_value }}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Revenue Model</h4>
-                    <p>{{ idea.revenue_model }}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Known Competitors</h4>
-                    <p>{{ idea.known_competitors }}</p>
-                </div>
-            </div>
+            {% endif %}
         </div>
-        {% endfor %}
-        {% else %}
-        <div class="idea-card" style="text-align: center; padding: 40px;">
-            <p>You haven't uploaded any ideas yet. Go to your dashboard to get started!</p>
-        </div>
-        {% endif %}
     </div>
+    {% endfor %}
+    {% else %}
+    <div class="idea-card" style="text-align: center; padding: 40px;">
+        <p>You haven't uploaded any ideas yet. Go to your dashboard to get started!</p>
+    </div>
+    {% endif %}
+</div>
 
 
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const headers = document.querySelectorAll('.idea-card-header');
+    document.addEventListener('DOMContentLoaded', function () {
+        const headers = document.querySelectorAll('.idea-card-header');
 
-            headers.forEach(header => {
-                header.addEventListener('click', event => {
-                    // Prevent toggling when clicking on a button or link inside the header
-                    if (event.target.closest('a, button')) {
-                        return;
-                    }
+        headers.forEach(header => {
+            header.addEventListener('click', event => {
+                // Prevent toggling when clicking on a button or link inside the header
+                if (event.target.closest('a, button')) {
+                    return;
+                }
 
-                    const content = header.nextElementSibling;
-                    const isActive = header.classList.contains('active');
+                const content = header.nextElementSibling;
+                const isActive = header.classList.contains('active');
 
-                    // Optional: Close all other accordions
-                    // headers.forEach(h => {
-                    //     h.classList.remove('active');
-                    //     h.nextElementSibling.classList.remove('show');
-                    //     h.nextElementSibling.style.maxHeight = null;
-                    // });
+                // Optional: Close all other accordions
+                // headers.forEach(h => {
+                //     h.classList.remove('active');
+                //     h.nextElementSibling.classList.remove('show');
+                //     h.nextElementSibling.style.maxHeight = null;
+                // });
 
-                    if (!isActive) {
-                        header.classList.add('active');
-                        content.classList.add('show');
-                        // Set max-height to the scroll height for smooth transition
-                        content.style.maxHeight = content.scrollHeight + 'px';
-                    } else {
-                        header.classList.remove('active');
-                        content.classList.remove('show');
-                        content.style.maxHeight = null;
-                    }
-                });
+                if (!isActive) {
+                    header.classList.add('active');
+                    content.classList.add('show');
+                    // Set max-height to the scroll height for smooth transition
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                } else {
+                    header.classList.remove('active');
+                    content.classList.remove('show');
+                    content.style.maxHeight = null;
+                }
             });
         });
-    </script>
+    });
+</script>
 {% endblock %}
