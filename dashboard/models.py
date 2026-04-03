@@ -27,6 +27,10 @@ class Ideas(models.Model):
     score_threats = models.IntegerField(default=0)
     score = models.IntegerField(default=0)
 
+    # Web3 Fields
+    idea_hash = models.CharField(max_length=255, blank=True, null=True) # Idea ka digital fingerprint
+    blockchain_tx_hash = models.CharField(max_length=255, blank=True, null=True) # Blockchain ki receipt (Transaction ID)
+
 
 
 class Connection(models.Model):
@@ -43,3 +47,7 @@ class Connection(models.Model):
 
     class Meta:
         unique_together = ('investor', 'idea')
+
+
+
+    
