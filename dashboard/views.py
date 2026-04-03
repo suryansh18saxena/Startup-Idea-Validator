@@ -11,16 +11,18 @@ from .models import Ideas
 from algosdk import account, mnemonic
 from algosdk.v2client import algod
 from algosdk.transaction import PaymentTxn
+from dotenv import load_dotenv
+import os
 
 
-
+load_dotenv()  
 # Algorand Testnet setup (Free node provided by AlgoNode)
 algod_address = "https://testnet-api.algonode.cloud"
 algod_client = algod.AlgodClient("", algod_address)
 
 # Apna Address aur 25-word mnemonic yahan daalein
-MY_ADDRESS = "YTKMD5IQUWPKUIP3QYC3QZKXPDYVVEMHM7HW2VAJRGXBMG7G6VZWSNXUWM"
-PASSPHRASE = "test fade arrow rigid disorder riot law marine merge monster heavy street solid energy infant vicious betray rival toast fall hope clown envelope abstract apology"
+MY_ADDRESS = os.getenv("MY_ADDRESS")  
+PASSPHRASE = os.getenv("PASSPHRASE")
 
 # Mnemonic se Private Key automatically nikal lenge
 MY_PRIVATE_KEY = mnemonic.to_private_key(PASSPHRASE)
@@ -398,6 +400,7 @@ def profile(request):
     return render(request, "dashboard/user/profile.html", parameters)
 
 
+
 # ===================================Manage PRDs====================================
 @login_required
 def my_prds_view(request):
@@ -426,4 +429,4 @@ def edit_prd_view(request, idea_id):
     }
     return render(request, "dashboard/user/edit_prd.html", parameters)
 
-
+
