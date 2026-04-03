@@ -26,10 +26,12 @@ class Ideas(models.Model):
     score_opportunities = models.IntegerField(default=0)
     score_threats = models.IntegerField(default=0)
     score = models.IntegerField(default=0)
+    prd_content = models.TextField(blank=True, null=True)
 
-    # Web3 Fields
-    idea_hash = models.CharField(max_length=255, blank=True, null=True) # Idea ka digital fingerprint
-    blockchain_tx_hash = models.CharField(max_length=255, blank=True, null=True) # Blockchain ki receipt (Transaction ID)
+    # Blockchain fields
+    idea_hash = models.CharField(max_length=64, blank=True, null=True)
+    blockchain_tx_hash = models.CharField(max_length=100, blank=True, null=True)
+    
 
 
 
