@@ -15,4 +15,9 @@ urlpatterns = [
     path('handle_request/<int:connection_id>/<str:action>/', views.handle_connection_request, name='handle_connection'),
     path('request/',views.request, name='request'),
     path('my_connections/', views.my_connections, name='my_connections'),
+    path('generate-prd/<int:idea_id>/', views.generate_prd_view, name='generate_prd'),
+    path('my-prds/', views.my_prds_view, name='my_prds'),
+    path('edit-prd/<int:idea_id>/', views.edit_prd_view, name='edit_prd'),
+    path('similarity-result/', views.similarity_result_view, name='similarity_result'),
+    path('confirm-idea/', views.confirm_idea, name='confirm_idea'),
 ]
