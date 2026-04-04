@@ -115,7 +115,7 @@
         <h1>Submit Your <span class="gradient-text">Startup Idea</span></h1>
         <p class="form-subtitle">The more detail you provide, the better the insights and validation score you will receive from our AI analysis.</p>
 
-        <form method="POST">
+        <form method="POST" onsubmit="showLoadingOverlay('🧠 Checking Originality', 'Scanning databases for similar ideas')">
             {% csrf_token %}
 
             <div class="form-group">
