@@ -8,6 +8,8 @@ IdeaSaarthi is an advanced web platform that helps entrepreneurs validate their 
 
 ---
 
+
+
 ## ✨ Core Features
 
 The platform is designed for two primary user types: **Entrepreneurs (Users)** and **Investors**.
