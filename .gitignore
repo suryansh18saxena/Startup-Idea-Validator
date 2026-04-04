@@ -1,2 +1,16 @@
+# Environment variables
 .env
+
+# Python byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.venv
+# Database
 db.sqlite3

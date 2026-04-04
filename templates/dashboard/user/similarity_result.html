@@ -271,7 +271,7 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <a href="{% url 'confirm_idea' %}" class="btn-action btn-confirm">
+            <a href="{% url 'confirm_idea' %}" class="btn-action btn-confirm" onclick="showLoadingOverlay('🚀 Saving & Analyzing', 'Running SWOT analysis and blockchain verification')">
                 <i class="ph-bold ph-check-circle"></i> Confirm & Save Idea
             </a>
             <a href="{% url 'create_idea' %}" class="btn-action btn-discard">

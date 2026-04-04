@@ -198,6 +198,127 @@
        .background span:nth-child(5) { color: var(--secondary); top: 88%; left: 81%; animation-duration: 43s; animation-delay: -11s; transform-origin: 7vw -11vh; box-shadow: -40vmin 0 5.2vmin currentColor; }
        .background span:nth-child(6) { color: var(--primary); top: 8%; left: 11%; animation-duration: 41s; animation-delay: -14s; transform-origin: 1vw 12vh; box-shadow: -40vmin 0 5.1vmin currentColor; }
 
+    /* ===== GLOBAL LOADING OVERLAY ===== */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .loading-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    .loading-content {
+      text-align: center;
+      animation: loadFadeIn 0.6s ease-out;
+    }
+    @keyframes loadFadeIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Pulsating Logo Icon */
+    .loading-logo {
+      width: 80px; height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; color: white;
+      animation: logoPulse 2s ease-in-out infinite;
+      box-shadow: 0 8px 40px rgba(79, 70, 229, 0.35);
+    }
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 40px rgba(79, 70, 229, 0.35); }
+      50% { transform: scale(1.08); box-shadow: 0 12px 50px rgba(79, 70, 229, 0.5); }
+    }
+
+    /* Orbital Spinner around logo */
+    .loading-spinner-ring {
+      position: absolute;
+      width: 110px; height: 110px;
+      border: 3px solid transparent;
+      border-top: 3px solid #4f46e5;
+      border-right: 3px solid #06b6d4;
+      border-radius: 50%;
+      animation: orbitalSpin 1.2s linear infinite;
+    }
+    @keyframes orbitalSpin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-logo-wrapper {
+      position: relative;
+      width: 110px; height: 110px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* Title */
+    .loading-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Subtitle with animated dots */
+    .loading-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+    .loading-dots::after {
+      content: '';
+      animation: loadingDots 1.5s steps(4, end) infinite;
+    }
+    @keyframes loadingDots {
+      0% { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+    }
+
+    /* Shimmer Progress Bar */
+    .loading-bar-track {
+      width: 260px;
+      height: 6px;
+      border-radius: 10px;
+      background: #e5e7eb;
+      margin: 0 auto 1.5rem;
+      overflow: hidden;
+    }
+    .loading-bar-fill {
+      width: 40%;
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #4f46e5, #06b6d4, #8b5cf6);
+      background-size: 200%;
+      animation: barShimmer 1.5s ease-in-out infinite;
+    }
+    @keyframes barShimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(350%); }
+    }
+
+    /* Fun tip text */
+    .loading-tip {
+      font-size: 0.82rem;
+      color: #8b5cf6;
+      font-weight: 500;
+      font-style: italic;
+      min-height: 1.5em;
+      transition: opacity 0.3s ease;
+    }
   </style>
 </head>
 
@@ -242,6 +363,70 @@
   {% block body %}
 
   {% endblock %}
+
+  <!-- ===== GLOBAL LOADING OVERLAY ===== -->
+  <div class="loading-overlay" id="globalLoadingOverlay">
+    <div class="loading-content">
+      <div class="loading-logo-wrapper">
+        <div class="loading-spinner-ring"></div>
+        <div class="loading-logo">
+          <i class="ph-fill ph-rocket-launch"></i>
+        </div>
+      </div>
+      <div class="loading-title" id="loadingTitle">Analyzing Your Idea</div>
+      <div class="loading-subtitle"><span id="loadingSubtitle">Our AI is working its magic</span><span class="loading-dots"></span></div>
+      <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+      <div class="loading-tip" id="loadingTip">💡 Great ideas take a moment to validate!</div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Loading Overlay Controller =====
+    const loadingTips = [
+      "💡 Great ideas take a moment to validate!",
+      "🧠 Running deep AI analysis on your concept...",
+      "📊 Crunching market data and competitor insights...",
+      "🔍 Scanning databases for similar ventures...",
+      "🚀 Almost there — preparing your personalized report!",
+      "⚡ Our AI is faster than a VC pitch meeting!",
+      "🎯 Fine-tuning results for maximum accuracy...",
+      "🌟 Building something amazing takes patience...",
+    ];
+
+    let tipInterval = null;
+
+    function showLoadingOverlay(title, subtitle) {
+      const overlay = document.getElementById('globalLoadingOverlay');
+      const titleEl = document.getElementById('loadingTitle');
+      const subtitleEl = document.getElementById('loadingSubtitle');
+      const tipEl = document.getElementById('loadingTip');
+
+      if (title) titleEl.textContent = title;
+      if (subtitle) subtitleEl.textContent = subtitle;
+
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // Rotate tips every 3 seconds
+      let tipIndex = 0;
+      tipEl.textContent = loadingTips[0];
+      tipInterval = setInterval(() => {
+        tipIndex = (tipIndex + 1) % loadingTips.length;
+        tipEl.style.opacity = '0';
+        setTimeout(() => {
+          tipEl.textContent = loadingTips[tipIndex];
+          tipEl.style.opacity = '1';
+        }, 300);
+      }, 3000);
+    }
+
+    function hideLoadingOverlay() {
+      const overlay = document.getElementById('globalLoadingOverlay');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      if (tipInterval) clearInterval(tipInterval);
+    }
+  </script>
 
 </body>
 

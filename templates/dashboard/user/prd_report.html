@@ -256,7 +256,7 @@
                 <a href="{% url 'analyze_idea' idea.id %}" class="btn-back">
                     <i class="ph-bold ph-arrow-left"></i> Back to SWOT
                 </a>
-                <a href="{% url 'generate_prd' idea.id %}?regenerate=1" class="btn-back" style="border-color: #F59E0B; color: #D97706;" title="Regenerate PRD with a fresh API call">
+                <a href="{% url 'generate_prd' idea.id %}?regenerate=1" class="btn-back" style="border-color: #F59E0B; color: #D97706;" title="Regenerate PRD with a fresh API call" onclick="showLoadingOverlay('📄 Regenerating PRD', 'AI is crafting a fresh Product Requirements Document')">
                     <i class="ph-bold ph-arrows-clockwise"></i> Regenerate PRD 🔄
                 </a>
                 <button id="btn-download-pdf" class="btn-download">
