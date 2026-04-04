@@ -18,6 +18,7 @@ urlpatterns = [
     path('generate-prd/<int:idea_id>/', views.generate_prd_view, name='generate_prd'),
     path('my-prds/', views.my_prds_view, name='my_prds'),
     path('edit-prd/<int:idea_id>/', views.edit_prd_view, name='edit_prd'),
+    path('ai-edit-prd/<int:idea_id>/', views.ai_edit_prd, name='ai_edit_prd'),
     path('similarity-result/', views.similarity_result_view, name='similarity_result'),
     path('confirm-idea/', views.confirm_idea, name='confirm_idea'),
 ]
