@@ -1,4 +1,4 @@
-﻿Django==5.2
+Django==5.2
 django-filter==25.1
 djangorestframework==3.16.1
 google-ai-generativelanguage==0.6.15
@@ -9,7 +9,14 @@ google-auth-httplib2==0.2.0
 google-generativeai==0.8.5
 googleapis-common-protos==1.70.0
 python-dotenv==1.1.1
-gunicorn
-whitenoise
-
-
+py-algorand-sdk==2.11.1
+pyasn1==0.6.3
+pyasn1_modules==0.4.2
+pycparser==3.0
+pycryptodomex==3.23.0
+pydantic==2.12.5
+pydantic_core==2.41.5
+PyNaCl==1.6.2
+pyparsing==3.3.2
+python-dotenv==1.1.1
+requests==2.33.1
