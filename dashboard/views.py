@@ -2,8 +2,11 @@ from django.shortcuts import render,redirect
 from .models import Ideas,Connection
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .api_service import get_swot_analysis, generate_prd_content, check_idea_similarity
+from .api_service import get_swot_analysis, generate_prd_content, check_idea_similarity, edit_prd_with_ai
 import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.db.models import Avg
 import hashlib
 from django.shortcuts import render, redirect
@@ -430,3 +433,36 @@ def edit_prd_view(request, idea_id):
     return render(request, "dashboard/user/edit_prd.html", parameters)
 
 
+# ===================================AI Edit PRD (AJAX)====================================
+@login_required
+@require_POST
+def ai_edit_prd(request, idea_id):
+    """AJAX endpoint: AI applies user-requested changes to the PRD."""
+    try:
+        idea = Ideas.objects.get(id=idea_id, user=request.user)
+    except Ideas.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Idea not found or access denied."}, status=404)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"success": False, "error": "Invalid JSON payload."}, status=400)
+
+    instruction = data.get("instruction", "").strip()
+    current_content = data.get("current_content", "").strip()
+
+    if not instruction:
+        return JsonResponse({"success": False, "error": "Please provide an instruction."}, status=400)
+
+    if not current_content:
+        current_content = idea.prd_content or ""
+
+    result = edit_prd_with_ai(current_content, instruction)
+
+    if result["success"]:
+        # Save the updated PRD to the database
+        idea.prd_content = result["updated_content"]
+        idea.save()
+        return JsonResponse({"success": True, "updated_content": result["updated_content"]})
+    else:
+        return JsonResponse({"success": False, "error": result.get("error", "AI processing failed.")}, status=500)
